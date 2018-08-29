@@ -51,23 +51,29 @@ var Environment = function(src)
     self.src = src;
     return self;
 }
-var bg = new Environment("images/bg.png");
-var fg = new Environment("images/fg.png");
-var bird = new Bird("images/bird.png"); //bird
-var pipeNorth = new Pipe("images/pipeNorth.png", 0);
-var pipeSouth = new Pipe("images/pipeSouth.png", 400);
 
-function draw() //game
+var Game = function()
 {
-    ctx.drawImage(bg,0,0);
-    ctx.drawImage(fg,0,cvs.height - fg.height);
-    ctx.drawImage(pipeNorth, pipeNorth.pX, pipeNorth.pY);
-    ctx.drawImage(pipeSouth, pipeSouth.pX, pipeSouth.pY);
-    ctx.drawImage(bird, bird.bX, bird.bY);
-    pipeNorth.update();
-    pipeSouth.update();
-    bird.update();
-    requestAnimationFrame(draw); 
+    bg = new Environment("images/bg.png");
+    fg = new Environment("images/fg.png");
+    bird = new Bird("images/bird.png");
+    pipeNorth = new Pipe("images/pipeNorth.png", 0);
+    pipeSouth = new Pipe("images/pipeSouth.png", 400);
+
+    self.update = function()
+    {
+        ctx.drawImage(bg,0,0);
+        ctx.drawImage(fg,0,cvs.height - fg.height);
+        ctx.drawImage(pipeNorth, pipeNorth.pX, pipeNorth.pY);
+        ctx.drawImage(pipeSouth, pipeSouth.pX, pipeSouth.pY);
+        ctx.drawImage(bird, bird.bX, bird.bY);
+        pipeNorth.update();
+        pipeSouth.update();
+        bird.update();
+        requestAnimationFrame(update); 
+    }
+    return self;
 }
 
-draw();
+var game = Game();
+game.update();

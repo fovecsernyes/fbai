@@ -1,19 +1,19 @@
-var cvs = document.getElementById("canvas");
-var ctx = cvs.getContext("2d");
+//var cvs = document.getElementById("canvas");
+//var ctx = cvs.getContext("2d");
 
 // load images
 
-var bird = new Image(); //bird
-var bg = new Image(); //game
-var fg = new Image(); //game
-var pipeNorth = new Image(); //pipe
-var pipeSouth = new Image(); //pipe
+//var bird = new Image(); //bird
+//var bg = new Image(); //game
+//var fg = new Image(); //game
+//var pipeNorth = new Image(); //pipe
+//var pipeSouth = new Image(); //pipe
 
-bird.src = "images/bird.png"; //bird
-bg.src = "images/bg.png"; //game
-fg.src = "images/fg.png"; //game
-pipeNorth.src = "images/pipeNorth.png"; //pipe
-pipeSouth.src = "images/pipeSouth.png"; //pipe
+//bird.src = "images/bird.png"; //bird
+//bg.src = "images/bg.png"; //game
+//fg.src = "images/fg.png"; //game
+//pipeNorth.src = "images/pipeNorth.png"; //pipe
+//pipeSouth.src = "images/pipeNorth.png"; //pipe
 
 
 // some variables
@@ -21,29 +21,29 @@ pipeSouth.src = "images/pipeSouth.png"; //pipe
 var gap = 85; //pipe
 var constant; //?
 
-var bX = 10; //bird
-var bY = 150; //bird
+//var bX = 10; //bird
+//var bY = 150; //bird
 
-var gravity = 1.5; //bird
+//var gravity = 1.5; //environment
 
-var fitness = 0; //bird
+//var score = 0; //bird
 
 // audio files
 
-var fly = new Audio(); //no need
-var scor = new Audio(); //no need 
+//var fly = new Audio(); //no need
+//var scor = new Audio(); //no need 
 
-fly.src = "sounds/fly.mp3"; //no need
-scor.src = "sounds/score.mp3";//no need
+//fly.src = "sounds/fly.mp3"; //no need
+//scor.src = "sounds/score.mp3";//no need
 
 // on key down
 
-document.addEventListener("keydown",moveUp); //no need
+//document.addEventListener("keydown",moveUp); //no need
 
-function moveUp(){ //bird
-    bY -= 25;
-    fly.play();
-}
+//function moveUp(){ //bird
+//    bY -= 25;
+//    fly.play();
+//}
 
 // pipe coordinates
 
