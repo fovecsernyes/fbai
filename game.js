@@ -2,7 +2,7 @@ var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
 var gravity = 1.5; //userinput
-var population = 5; //userinput
+var population = 50; //userinput
 var gap = 85; //user input
 
 bg = new Image();
@@ -70,6 +70,7 @@ var Game = function()
 {
     var pipe = [];
     pipe[0] = Pipe(0);
+    alive = population;
 
     var bird = [];
     for (var i = 0; i < population; i++ )
@@ -103,20 +104,25 @@ var Game = function()
 
         for (var i = 0; i < bird.length; i++)
         {
- 
-
             if (bird[i].alive)
             {
                 ctx.drawImage(birdImg, bird[i].bX, bird[i].bY);
                 bird[i].update();
-                // for (var i = 0; i < pipe.length; i++)
-                // {
-                //     if( bird[i].bX + birdImg.width >= pipe[i].pX && bird[i].bX <= pipe[i].pX + pipeNorthImg.width && (bird[i].bY <= pipe[i].pY + pipeNorthImg.height || bird[i].bY+birdImg.height >= pipe[i].pY+constant) || bird[i].bY + birdImg.height >=  cvs.height - fg.height)
-                //     {
-                //     bird[i].kill();
-                //     } 
-                // }
+                for (var j = 0; j < pipe.length; j++)
+                {
+                    if( bird[i].bX + birdImg.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + pipeNorthImg.width && (bird[i].bY <= pipe[j].pY + pipeNorthImg.height || bird[i].bY+birdImg.height >= pipe[j].pY+constant) || bird[i].bY + birdImg.height >=  cvs.height - fg.height)
+                    {
+                        bird[i].kill();
+                        alive--;
+                    } 
+                }
             }
+        }
+        //sometimes goes under 0 (tried with #500 birds)
+        console.log(alive);
+        if (alive <= 0)
+        {
+            location.reload();
         }
 
         requestAnimationFrame(update); 
