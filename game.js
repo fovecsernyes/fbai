@@ -45,18 +45,28 @@ var Pipe = function(src, gap)
     return self;
 }
 
+var Environment = function(src)
+{
+    var self = new Image();
+    self.src = src;
+    return self;
+}
+var bg = new Environment("images/bg.png");
+var fg = new Environment("images/fg.png");
 var bird = new Bird("images/bird.png"); //bird
 var pipeNorth = new Pipe("images/pipeNorth.png", 0);
 var pipeSouth = new Pipe("images/pipeSouth.png", 400);
 
 function draw() //game
 {
-    ctx.drawImage(bird, bird.bX, bird.bY);
+    ctx.drawImage(bg,0,0);
+    ctx.drawImage(fg,0,cvs.height - fg.height);
     ctx.drawImage(pipeNorth, pipeNorth.pX, pipeNorth.pY);
     ctx.drawImage(pipeSouth, pipeSouth.pX, pipeSouth.pY);
-    bird.update();
+    ctx.drawImage(bird, bird.bX, bird.bY);
     pipeNorth.update();
     pipeSouth.update();
+    bird.update();
     requestAnimationFrame(draw); 
 }
 
