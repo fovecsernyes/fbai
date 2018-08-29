@@ -1,24 +1,39 @@
 var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
-gravity = 1.5; //userinput
-population = 5; //userinput
+var gravity = 1.5; //userinput
+var population = 5; //userinput
+var gap = 85; //user input
+
+bg = new Image();
+fg = new Image();
+
+bg.src = "images/bg.png";
+fg.src = "images/fg.png";
+
+birdImg = new Image();
+pipeNorthImg = new Image();
+pipeSouthImg = new Image();
+birdImg.src = "images/bird.png";
+pipeNorthImg.src = "images/pipeNorth.png";
+pipeSouthImg.src = "images/pipeSouth.png";
 
 //bird class
-var Bird = function(src)
+var Bird = function()
 {
-    var self = new Image();
-    self.bX = 10;
-    self.bY = 150;
-    self.angle = 0;
-    self.src = src;
-    self.fitness = 0;
-    self.alive = true;
+    var self = 
+    {
+        bX: 10,
+        bY: 150,
+        //angle: 0,
+        fitness: 0,
+        alive: true
+    }
 
     self.update = function()
     {
         self.bY += gravity;
-        if(Math.floor(30 * Math.random()) % 30 === 0){
+        if(Math.floor(18 * Math.random()) % 18 === 0){
             self.moveUp();
         }
     }
@@ -36,12 +51,13 @@ var Bird = function(src)
     return self;
 }
 
-var Pipe = function(src, gap)
+var Pipe = function(y)
 {
-    var self = new Image();
-    self.src = src;
-    self.pX = cvs.width;
-    self.pY = gap;
+    var self = 
+    {
+        pX: cvs.width,
+        pY: y
+    }
 
     self.update = function()
     {
@@ -50,42 +66,59 @@ var Pipe = function(src, gap)
     return self;
 }
 
-var Environment = function(src)
-{
-    var self = new Image();
-    self.src = src;
-    return self;
-}
-
 var Game = function()
 {
-    bg = Environment("images/bg.png");
-    fg = Environment("images/fg.png");
+    var pipe = [];
+    pipe[0] = Pipe(0);
 
-    var birds = new Array(population);
+    var bird = [];
     for (var i = 0; i < population; i++ )
     {
-        birds[i] = Bird("images/bird.png");
+        bird[i] = Bird();
     }   
-
-    pipeNorth = Pipe("images/pipeNorth.png", 0);
-    pipeSouth = Pipe("images/pipeSouth.png", 400);
 
     self.update = function()
     {
         ctx.drawImage(bg,0,0);
-        ctx.drawImage(fg,0,cvs.height - fg.height);
-        ctx.drawImage(pipeNorth, pipeNorth.pX, pipeNorth.pY);
-        ctx.drawImage(pipeSouth, pipeSouth.pX, pipeSouth.pY);
-        pipeNorth.update();
-        pipeSouth.update();
-
-        for (var i = 0; i < population; i++)
+        for(var i = 0; i < pipe.length; i++)
         {
-            ctx.drawImage(birds[i], birds[i].bX, birds[i].bY);
-            birds[i].update();
+            if(pipe[i].pX <  0 - pipeNorthImg.width)
+            {
+                pipe.shift();
+            }
+
+            constant = pipeNorthImg.height+gap;
+            ctx.drawImage(pipeNorthImg, pipe[i].pX, pipe[i].pY);
+            ctx.drawImage(pipeSouthImg, pipe[i].pX, pipe[i].pY+constant);
+            pipe[i].update();
+
+            if( pipe[i].pX == 125 )
+            {
+                pipe.push(Pipe(Math.floor(Math.random()*pipeNorthImg.height)-pipeNorthImg.height)); 
+            }
+
         }
-        
+
+        ctx.drawImage(fg,0,cvs.height - fg.height);
+
+        for (var i = 0; i < bird.length; i++)
+        {
+ 
+
+            if (bird[i].alive)
+            {
+                ctx.drawImage(birdImg, bird[i].bX, bird[i].bY);
+                bird[i].update();
+                // for (var i = 0; i < pipe.length; i++)
+                // {
+                //     if( bird[i].bX + birdImg.width >= pipe[i].pX && bird[i].bX <= pipe[i].pX + pipeNorthImg.width && (bird[i].bY <= pipe[i].pY + pipeNorthImg.height || bird[i].bY+birdImg.height >= pipe[i].pY+constant) || bird[i].bY + birdImg.height >=  cvs.height - fg.height)
+                //     {
+                //     bird[i].kill();
+                //     } 
+                // }
+            }
+        }
+
         requestAnimationFrame(update); 
     }
     return self;
