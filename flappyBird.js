@@ -3,60 +3,60 @@ var ctx = cvs.getContext("2d");
 
 // load images
 
-var bird = new Image();
-var bg = new Image();
-var fg = new Image();
-var pipeNorth = new Image();
-var pipeSouth = new Image();
+var bird = new Image(); //bird
+var bg = new Image(); //game
+var fg = new Image(); //game
+var pipeNorth = new Image(); //pipe
+var pipeSouth = new Image(); //pipe
 
-bird.src = "images/bird.png";
-bg.src = "images/bg.png";
-fg.src = "images/fg.png";
-pipeNorth.src = "images/pipeNorth.png";
-pipeSouth.src = "images/pipeSouth.png";
+bird.src = "images/bird.png"; //bird
+bg.src = "images/bg.png"; //game
+fg.src = "images/fg.png"; //game
+pipeNorth.src = "images/pipeNorth.png"; //pipe
+pipeSouth.src = "images/pipeSouth.png"; //pipe
 
 
 // some variables
 
-var gap = 85;
-var constant;
+var gap = 85; //pipe
+var constant; //?
 
-var bX = 10;
-var bY = 150;
+var bX = 10; //bird
+var bY = 150; //bird
 
-var gravity = 1.5;
+var gravity = 1.5; //bird
 
-var score = 0;
+var fitness = 0; //bird
 
 // audio files
 
-var fly = new Audio();
-var scor = new Audio();
+var fly = new Audio(); //no need
+var scor = new Audio(); //no need 
 
-fly.src = "sounds/fly.mp3";
-scor.src = "sounds/score.mp3";
+fly.src = "sounds/fly.mp3"; //no need
+scor.src = "sounds/score.mp3";//no need
 
 // on key down
 
-document.addEventListener("keydown",moveUp);
+document.addEventListener("keydown",moveUp); //no need
 
-function moveUp(){
+function moveUp(){ //bird
     bY -= 25;
     fly.play();
 }
 
 // pipe coordinates
 
-var pipe = [];
+var pipe = []; //game
 
-pipe[0] = {
+pipe[0] = { //game
     x : cvs.width,
     y : 0
 };
 
 // draw images
 
-function draw(){
+function draw(){ //game
     
     ctx.drawImage(bg,0,0);
     
