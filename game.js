@@ -2,6 +2,7 @@ var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
 gravity = 1.5; //userinput
+population = 5; //userinput
 
 //bird class
 var Bird = function(src)
@@ -9,6 +10,7 @@ var Bird = function(src)
     var self = new Image();
     self.bX = 10;
     self.bY = 150;
+    self.angle = 0;
     self.src = src;
     self.fitness = 0;
     self.alive = true;
@@ -16,6 +18,9 @@ var Bird = function(src)
     self.update = function()
     {
         self.bY += gravity;
+        if(Math.floor(30 * Math.random()) % 30 === 0){
+            self.moveUp();
+        }
     }
 
     self.moveUp = function()
@@ -54,11 +59,17 @@ var Environment = function(src)
 
 var Game = function()
 {
-    bg = new Environment("images/bg.png");
-    fg = new Environment("images/fg.png");
-    bird = new Bird("images/bird.png");
-    pipeNorth = new Pipe("images/pipeNorth.png", 0);
-    pipeSouth = new Pipe("images/pipeSouth.png", 400);
+    bg = Environment("images/bg.png");
+    fg = Environment("images/fg.png");
+
+    var birds = new Array(population);
+    for (var i = 0; i < population; i++ )
+    {
+        birds[i] = Bird("images/bird.png");
+    }   
+
+    pipeNorth = Pipe("images/pipeNorth.png", 0);
+    pipeSouth = Pipe("images/pipeSouth.png", 400);
 
     self.update = function()
     {
@@ -66,10 +77,15 @@ var Game = function()
         ctx.drawImage(fg,0,cvs.height - fg.height);
         ctx.drawImage(pipeNorth, pipeNorth.pX, pipeNorth.pY);
         ctx.drawImage(pipeSouth, pipeSouth.pX, pipeSouth.pY);
-        ctx.drawImage(bird, bird.bX, bird.bY);
         pipeNorth.update();
         pipeSouth.update();
-        bird.update();
+
+        for (var i = 0; i < population; i++)
+        {
+            ctx.drawImage(birds[i], birds[i].bX, birds[i].bY);
+            birds[i].update();
+        }
+        
         requestAnimationFrame(update); 
     }
     return self;
