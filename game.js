@@ -2,23 +2,27 @@ var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
 var gravity = 1.5; //userinput
-var population = 50; //userinput
+var population = 150; //userinput
 var gap = 85; //user input
 
-bg = new Image();
-fg = new Image();
+var LoadImages = function()
+{
+    bg = new Image();
+    fg = new Image();
+    
+    bg.src = "images/bg.png";
+    fg.src = "images/fg.png";
+    
+    bird = new Image();
+    pipeNorth = new Image();
+    pipeSouth = new Image();
+    bird.src = "images/bird.png";
+    pipeNorth.src = "images/pipeNorth.png";
+    pipeSouth.src = "images/pipeSouth.png";
 
-bg.src = "images/bg.png";
-fg.src = "images/fg.png";
+    return self;
+}
 
-birdImg = new Image();
-pipeNorthImg = new Image();
-pipeSouthImg = new Image();
-birdImg.src = "images/bird.png";
-pipeNorthImg.src = "images/pipeNorth.png";
-pipeSouthImg.src = "images/pipeSouth.png";
-
-//bird class
 var Bird = function()
 {
     var self = 
@@ -68,6 +72,8 @@ var Pipe = function(y)
 
 var Game = function()
 {
+    var img = LoadImages();
+
     var pipe = [];
     pipe[0] = Pipe(0);
     alive = population;
@@ -80,37 +86,37 @@ var Game = function()
 
     self.update = function()
     {
-        ctx.drawImage(bg,0,0);
+        ctx.drawImage(img.bg,0,0);
         for(var i = 0; i < pipe.length; i++)
         {
-            if(pipe[i].pX <  0 - pipeNorthImg.width)
+            if(pipe[i].pX <  0 - img.pipeNorth.width)
             {
                 pipe.shift();
             }
 
-            constant = pipeNorthImg.height+gap;
-            ctx.drawImage(pipeNorthImg, pipe[i].pX, pipe[i].pY);
-            ctx.drawImage(pipeSouthImg, pipe[i].pX, pipe[i].pY+constant);
+            constant = img.pipeNorth.height+gap;
+            ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
+            ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY+constant);
             pipe[i].update();
 
             if( pipe[i].pX == 125 )
             {
-                pipe.push(Pipe(Math.floor(Math.random()*pipeNorthImg.height)-pipeNorthImg.height)); 
+                pipe.push(Pipe(Math.floor(Math.random()*img.pipeNorth.height)-img.pipeNorth.height)); 
             }
 
         }
 
-        ctx.drawImage(fg,0,cvs.height - fg.height);
+        ctx.drawImage(img.fg,0,cvs.height - img.fg.height);
 
         for (var i = 0; i < bird.length; i++)
         {
             if (bird[i].alive)
             {
-                ctx.drawImage(birdImg, bird[i].bX, bird[i].bY);
+                ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
                 bird[i].update();
                 for (var j = 0; j < pipe.length; j++)
                 {
-                    if( bird[i].bX + birdImg.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + pipeNorthImg.width && (bird[i].bY <= pipe[j].pY + pipeNorthImg.height || bird[i].bY+birdImg.height >= pipe[j].pY+constant) || bird[i].bY + birdImg.height >=  cvs.height - fg.height)
+                    if( bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY+img.bird.height >= pipe[j].pY+constant) || bird[i].bY + img.bird.height >=  cvs.height - fg.height)
                     {
                         bird[i].kill();
                         alive--;
@@ -118,9 +124,8 @@ var Game = function()
                 }
             }
         }
-        //sometimes goes under 0 (tried with #500 birds)
-        console.log(alive);
-        if (alive <= 0)
+        //sometimes goes under 0 (tried with #180 birds)
+        if (alive == 0)
         {
             location.reload();
         }
