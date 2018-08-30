@@ -2,7 +2,7 @@ var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
 var gravity = 1.5; //userinput
-var population = 150; //userinput
+var population = 15; //userinput
 var gap = 85; //user input
 
 var LoadImages = function () {
@@ -32,6 +32,7 @@ var Bird = function () {
     }
 
     self.update = function () {
+        self.fitness++;
         self.bY += gravity;
         if (Math.floor(18 * Math.random()) % 18 === 0) {
             self.moveUp();
@@ -52,7 +53,7 @@ var Bird = function () {
 var Pipe = function (y) {
     var self =
     {
-        pX: cvs.width,
+        pX: cvs.width/2,
         pY: y
     }
 
@@ -84,6 +85,10 @@ var Game = function () {
             constant = img.pipeNorth.height + gap;
             ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
             ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
+
+            ctx.fillStyle = "white";
+            ctx.fillRect(canvas.width/2, 0, canvas.width, canvas.height);
+            
             pipe[i].update();
 
             if (pipe[i].pX == 125) {
@@ -105,12 +110,13 @@ var Game = function () {
                     }
                 }
             }
+            ctx.fillStyle="black";
+            ctx.fillText(i + ". bird's fitness: " + bird[i].fitness, cvs.width/2, 10 + i*10);
         }
         //sometimes goes under 0 (tried with #180 birds)
-        if (alive == 0) {
+        if (alive <= 0) {
             location.reload();
         }
-
         requestAnimationFrame(update);
     }
     return self;
