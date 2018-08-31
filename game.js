@@ -126,6 +126,9 @@ var Game = function () {
     }
     return self;
 }
+function main(){
+    var game = Game();
+    game.update();
+}
 
-var game = Game();
-game.update();
+main();
