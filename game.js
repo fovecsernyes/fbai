@@ -2,7 +2,7 @@ var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
 var gravity = 1.5; //userinput
-var population = 50; //userinput
+var population = 51; //userinput
 var gap = 85; //user input
 
 var LoadImages = function () {
@@ -115,7 +115,8 @@ var Game = function () {
                 c = "0" + c;
             }
             ctx.fillStyle="black";
-            ctx.fillText(c + ". bird's fitness: " + bird[i].fitness, cvs.width/2, 10 + i*10);
+            ctx.font="12px Monospace";
+            ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 10 + i*10);
         }
         //sometimes goes under 0 (tried with #180 birds)
         if (alive <= 0) {
