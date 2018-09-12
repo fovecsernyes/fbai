@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird AI learning</title>
+</head>
+<body>
+<form>
+    Gravity:
+    <select name=gravity method="GET" action="/">
+        {% for gravity in gravity %}
+            <option value= "{{gravity}}" SELECTED>{{ gravity }}</option>"
+        {% endfor %}
+    </select>
+    Population:
+    <select name=population method="GET" action="/">
+        {% for population in population %}
+            <option value= "{{population}}" SELECTED>{{ population }}</option>"
+        {% endfor %}
+    </select>
+    Gap:
+    <select name=gap method="GET" action="/">
+        {% for gap in gap %}
+            <option value= "{{gap}}" SELECTED>{{ gap }}</option>"
+        {% endfor %}
+    </select>
+
+    <input type="submit" value="Set" />
+</form>
+
+</body>
+</html>
