@@ -3,13 +3,10 @@ import psycopg2
 from config import config
 app = Flask(__name__)
 app.debug = True
-
-#!/usr/bin/python
-import psycopg2
-from config import config
  
 def connect():
     """ Connect to the PostgreSQL database server """
+    print("/////*************************//////")
     conn = None
     try:
         # read connection parameters
