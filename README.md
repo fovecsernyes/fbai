@@ -5,6 +5,7 @@ AI client for flappy bird
 * python3
 * Flask for python
 * psycopg2 for python
+* configparser for python
 * Web browser
 * PostgreSQL with postgres role
 
