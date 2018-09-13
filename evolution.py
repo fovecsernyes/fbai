@@ -9,10 +9,10 @@ def dropdown():
     population = [5*x for x in range(1, 11)]
     gap = [5*x for x in range(14, 25)]
 
-    if request.method == 'GET':
-         print("Gravity: " + request.args.get('gravity', "None") )
-         print("Population: " + request.args.get('population', "None") )
-         print("Gap: " + request.args.get('gap', "None") )
+    if request.method == 'POST':
+         print("Gravity: " + request.form['gravity'] )
+         print("Population: " + request.form['population'] )
+         print("Gap: " + request.form['gap'] )
 
     return render_template('index.html', gravity=gravity, population=population, gap=gap)
 
