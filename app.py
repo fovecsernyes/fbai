@@ -28,22 +28,38 @@ class Database(object):
 
         commands = (
             """
-                DROP TABLE IF EXISTS birds;
+            CREATE TABLE IF NOT EXISTS Cycle (
+                id SERIAL PRIMARY KEY,
+                parameters TEXT NOT NULL,
+                parent_id SERIAL REFERENCES Cycle UNIQUE,
+                sum_fitness INTEGER NOT NULL
+            )
             """,
             """
-            CREATE TABLE birds (
-                network VARCHAR(255) NOT NULL
+            CREATE TABLE IF NOT EXISTS Bird (
+                id  SERIAL PRIMARY KEY,
+                neural_network TEXT NOT NULL,
+                cycle_id SERIAL,
+                FOREIGN KEY (cycle_id) REFERENCES Cycle(parent_id)
             )
-            """)
-
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS Fitness (
+                id SERIAL PRIMARY KEY,
+                fitness INTEGER,
+                bird_id SERIAL,
+                cycle_id SERIAL,
+                FOREIGN KEY (bird_id) REFERENCES Bird(id),
+                FOREIGN KEY (cycle_id) REFERENCES Cycle(id)
+            )
+            """
+            )
         cur = self.conn.cursor()
         for command in commands:
              cur.execute(command)
         cur.close()
         self.conn.commit()
-
-        #print(population + " neural networks are generated")
-
+        print("Database intialized")
 
 @app.route('/', methods=['GET','POST'])
 def dropdown():
@@ -51,10 +67,13 @@ def dropdown():
     population = [5*x for x in range(1, 11)]
     gap = [5*x for x in range(14, 25)]
 
+    database_status = ""
+
     if request.method == 'POST':
         db.initialize(request.form['population'])
-
-    return render_template('index.html', gravity=gravity, population=population, gap=gap)
+        database_status = "OK"
+    #ebbe menjen a valasz
+    return render_template('index.html', gravity=gravity, population=population, gap=gap, database_status=database_status)
 
 if __name__ == "__main__":
     db = Database()

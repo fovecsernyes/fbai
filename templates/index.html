@@ -25,8 +25,10 @@
         {% endfor %}
     </select>
 
-    <input type="submit" formmethod="POST" value="Set" />
+    <input type="submit" formmethod="POST" value="Set"/>
+    <small style="color:green;" name=database_status method="POST" action="/"> {{ database_status }} </small>
 </form>
+
 
 </body>
 </html>
