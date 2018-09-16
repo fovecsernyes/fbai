@@ -33,7 +33,7 @@
     </select>
 
     <input id="apply" type="submit" formmethod="POST" value="Apply"/>
-    <button id="start">Start</button>
+    <input id="start" type="button" value="Start" />
 </form>
 
 <canvas id="canvas" width="576" height="512"></canvas>
@@ -70,9 +70,17 @@
                 }
             }, false);
             bg.src = "../static/images/welcome.png";
+
+            document.getElementById("start").addEventListener("click", function(){
+                document.getElementById("start").disabled = true;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.textAlign = "center";
+                ctx.fillText("Game started!", cvs.width/2, 100);
+            });
         }
 </script>
-
 
 </body>
 </html>

@@ -13,13 +13,13 @@ def dropdown():
     database_status = ""
 
     if request.method == 'POST':
-        database_status = db.create_tables()
         print("Gravity:" + request.form['gravity'] + "    " +
             "Population:" + request.form['population'] + "    " +
             "Gap:" + request.form['gap'] + "    " +
             "Rounds:" + request.form['rounds']
         ) 
 
+        database_status = db.create_tables()
     return render_template('index.html', gravity=gravity, population=population,
                 gap=gap, rounds=rounds, database_status=database_status)
 
