@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Flappy Bird AI learning</title>
+
 </head>
 <body>
 <form>
@@ -24,10 +25,53 @@
             <option value= "{{gap}}" SELECTED>{{ gap }}</option>"
         {% endfor %}
     </select>
+    Rounds:
+    <select name=rounds method="POST" action="/">
+        {% for rounds in rounds %}
+            <option value= "{{rounds}}" SELECTED>{{ rounds }}</option>"
+        {% endfor %}
+    </select>
 
-    <input type="submit" formmethod="POST" value="Set"/>
-    <small style="color:green;" name=database_status method="POST" action="/"> {{ database_status }} </small>
+    <input id="apply" type="submit" formmethod="POST" value="Apply"/>
+    <button id="start">Start</button>
 </form>
+
+<canvas id="canvas" width="576" height="512"></canvas>
+
+<script name=database_status method="POST" action="/">
+        window.onload = function() {
+            var cvs = document.getElementById("canvas");
+            var ctx = cvs.getContext("2d");
+
+            var bg = new Image();
+            bg.addEventListener('load', function() {
+                //background
+                ctx.drawImage(bg,0,0);
+                //welcome
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'white';
+                ctx.textAlign = "center";
+                ctx.fillText("Welcome!", cvs.width/2, 100);
+                //description
+                ctx.font = "15px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
+                ctx.fillText("Set the running parameters below then click Start!", cvs.width/2, 175);
+                //details
+                ctx.font = "10px Monospace";
+                ctx.fillStyle = "grey";
+                ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 20);
+                ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
+
+                document.getElementById("start").disabled = true;
+                if ( "{{database_status}}" == "OK"){
+                    document.getElementById("apply").disabled = true;
+                    document.getElementById("start").disabled = false;
+                }
+            }, false);
+            bg.src = "../static/images/welcome.png";
+        }
+</script>
 
 
 </body>

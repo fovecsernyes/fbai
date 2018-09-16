@@ -55,3 +55,4 @@ class Database(object):
         cur.close()
         self.conn.commit()
         print("Database intialized")
+        return "OK"
