@@ -13,7 +13,7 @@ def ApplyCommand():
 
 def StartRoundCommand():
     status="ACK"
-    return render_template('index.html', status=status)
+    return render_template("index.html", status=status)
     
 
 
@@ -21,6 +21,7 @@ def handle_command(flask_request: str) -> str:
 
 
     command = str(flask_request.get("command"))
+    print(flask_request)
 
     commands = {"None": NoKey,
                 "Apply" : ApplyCommand,
