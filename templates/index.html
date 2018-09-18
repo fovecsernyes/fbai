@@ -8,29 +8,13 @@
 <body>
 <form>
     Gravity:
-    <select name=gravity method="POST" action="/">
-        {% for gravity in gravity %}
-            <option value= "{{gravity}}" SELECTED>{{ gravity }}</option>"
-        {% endfor %}
-    </select>
+        <select name=gravity method="POST" action="/" id="gra_dd"></select>
     Population:
-    <select name=population method="POST" action="/">
-        {% for population in population %}
-            <option value= "{{population}}" SELECTED>{{ population }}</option>"
-        {% endfor %}
-    </select>
+        <select name=population method="POST" action="/" id="pop_dd"></select>
     Gap:
-    <select name=gap method="POST" action="/">
-        {% for gap in gap %}
-            <option value= "{{gap}}" SELECTED>{{ gap }}</option>"
-        {% endfor %}
-    </select>
+        <select name=gap method="POST" action="/" id="gap_dd"></select>
     Rounds:
-    <select name=rounds method="POST" action="/">
-        {% for rounds in rounds %}
-            <option value= "{{rounds}}" SELECTED>{{ rounds }}</option>"
-        {% endfor %}
-    </select>
+        <select name=rounds method="POST" action="/" id="rou_dd"></select>
 
     <input id="apply" type="submit" formmethod="POST" value="Apply"/>
     <input id="start" type="button" value="Start" />
@@ -41,7 +25,21 @@
 <canvas id="canvas" width="576" height="512"></canvas>
 
 <script name=database_status method="POST" action="/">
+        function dropdown(begin, end, add){
+            var options = "";
+            for(var i=begin; i<=end; i=i+add){
+                options += "<option>"+ i +"</option>";
+            }
+            console.log(options);
+            return options;
+        }
+
         window.onload = function() {
+            document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
+            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
+            document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
+            document.getElementById("rou_dd").innerHTML = dropdown(1,10,1);
+
             var cvs = document.getElementById("canvas");
             var ctx = cvs.getContext("2d");
 
