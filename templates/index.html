@@ -7,6 +7,7 @@
 </head>
 <body>
 <form>
+        <input type="hidden" name=command method="POST" action="/" value="Apply"/>
     Gravity:
         <select name=gravity method="POST" action="/" id="gra_dd"></select>
     Population:
@@ -30,7 +31,6 @@
             for(var i=begin; i<=end; i=i+add){
                 options += "<option>"+ i +"</option>";
             }
-            console.log(options);
             return options;
         }
 
@@ -63,7 +63,7 @@
                 ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 20);
                 ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
 
-                //document.getElementById("start").disabled = true;
+                document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;
@@ -71,13 +71,19 @@
             }, false);
             bg.src = "../static/images/welcome.png";
 
-            function submit(myData) {
-                $.post("/", {"myData": myData});
-            }
+            function submit(myCommand, myData) {
+                $.post("/", {
+                    "command": myCommand,
+                    "myData": myData
+                },
+                function(data){
+                    alert("RUN");
+                });
+            };
 
             document.getElementById("start").addEventListener("click", function(){
-                submit("sendsomething");
-                //document.getElementById("start").disabled = true;
+                submit("StartRound","START");
+                document.getElementById("start").disabled = true;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.font = "20px Monospace";
                 ctx.fillStyle = 'black';
