@@ -7,7 +7,6 @@
 </head>
 <body>
 <form>
-        <input type="hidden" name=command method="POST" action="/" value="Apply"/>
     Gravity:
         <select name=gravity method="POST" action="/" id="gra_dd"></select>
     Population:
@@ -17,7 +16,7 @@
     Rounds:
         <select name=rounds method="POST" action="/" id="rou_dd"></select>
 
-    <input id="apply" type="submit" formmethod="POST" value="Apply"/>
+    <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
     <input id="start" type="button" value="Start" />
     <input type="button" value="Reload" onClick="window.location.href=window.location.href">
 
@@ -74,11 +73,8 @@
 
             document.getElementById("start").addEventListener("click", function(){
                 
-                $.post( "/", {
-                    "command": "StartRound",
+                $.post( "/start", {
                     "mydata": "somedata"
-                },  function( data ) {
-                        console.log( $( ".result" ).html( data )) ;
                 });
 
                 document.getElementById("start").disabled = true;
