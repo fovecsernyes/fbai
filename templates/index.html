@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Flappy Bird AI learning</title>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 <form>
@@ -65,7 +65,7 @@
                 ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 20);
                 ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
 
-                document.getElementById("start").disabled = true;
+                //document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;
@@ -73,14 +73,18 @@
             }, false);
             bg.src = "../static/images/welcome.png";
 
+            function submit(myData) {
+                $.post("/", {"myData": myData});
+            }
+
             document.getElementById("start").addEventListener("click", function(){
-                document.getElementById("start").disabled = true;
+                submit("sendsomething");
+                //document.getElementById("start").disabled = true;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.font = "20px Monospace";
                 ctx.fillStyle = 'black';
                 ctx.textAlign = "center";
                 ctx.fillText("Game started!", cvs.width/2, 100);
-                // <form action onsubmit fv hivas>
                 
             });
         }

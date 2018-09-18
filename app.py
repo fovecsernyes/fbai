@@ -7,8 +7,7 @@ app.debug = True
 
 @app.route('/', methods=['GET','POST'])
 def HandleServicesRequest():
-    return gameservice.handle_command(request.data)
+    return gameservice.handle_command(request.form)
 
 if __name__ == "__main__":
-    db = Database()
     app.run()
