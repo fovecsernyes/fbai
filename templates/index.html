@@ -19,7 +19,7 @@
     <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
     <input id="start" type="button" value="Start" />
     <input type="button" value="Reload" onClick="window.location.href=window.location.href">
-
+    
 </form>
 
 <canvas id="canvas" width="576" height="512"></canvas>
@@ -38,7 +38,7 @@
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
             document.getElementById("rou_dd").innerHTML = dropdown(1,10,1);
-
+            
             var cvs = document.getElementById("canvas");
             var ctx = cvs.getContext("2d");
 
@@ -64,8 +64,16 @@
 
                 document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
+                    $('#gra_dd').val("{{gravity}}")
+                    $('#pop_dd').val("{{population}}")
+                    $('#gap_dd').val("{{gap}}")
+                    $('#rou_dd').val("{{rounds}}")
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;
+                    document.getElementById("gra_dd").disabled = true;
+                    document.getElementById("pop_dd").disabled = true;
+                    document.getElementById("gap_dd").disabled = true;
+                    document.getElementById("rou_dd").disabled = true;
                 }
             }, false);
             bg.src = "../static/images/welcome.png";

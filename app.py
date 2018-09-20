@@ -23,7 +23,11 @@ def ApplyRequest():
     running_params['rounds'] = request.form['rounds']
 
     database_status = database.create_tables()
-    return render_template('index.html', database_status=database_status)
+    return render_template('index.html', gravity=running_params['gravity'],
+                                        population=running_params['population'],
+                                        gap=running_params['gap'],
+                                        rounds=running_params['rounds'],
+                                        database_status=database_status)
 
 
 @app.route('/start', methods=['POST'])
