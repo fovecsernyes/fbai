@@ -77,10 +77,44 @@
                     type: "POST",
                     url: "/start",
                     contentType: "application/json",
-                    data: JSON.stringify( {"data" : "datavalue"} ),
+                    data: JSON.stringify( {"command" : "START"} ),
                     dataType: "json",
+                    async: false,
                     success: function(response) {
-                        console.log(response);
+                        for( var i = 0; i < response["rounds"]; i++){
+                            console.log(i + ". round");
+                            
+                            $.ajax({
+                                type: "POST",
+                                url: "/round",
+                                contentType: "application/json",
+                                data: JSON.stringify( {"round" : i} ),
+                                dataType: "json",
+                                async: false,
+                                success: function(response) {
+                                        console.log(response);
+                                        console.log("fly the birds")
+
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/finishround",
+                                            contentType: "application/json",
+                                            data: JSON.stringify( {"roundfinished" : i} ),
+                                            dataType: "json",
+                                            async: false,
+                                            success: function(response) {
+                                                    console.log(response);
+                                            },
+                                            error: function(err) {
+                                                console.log(err);
+                                            }
+                                        });      
+                                },
+                                error: function(err) {
+                                    console.log(err);
+                                }
+                            });
+                        };
                     },
                     error: function(err) {
                         console.log(err);
