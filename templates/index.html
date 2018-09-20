@@ -73,8 +73,18 @@
 
             document.getElementById("start").addEventListener("click", function(){
                 
-                $.post( "/start", {
-                    "mydata": "somedata"
+                $.ajax({
+                    type: "POST",
+                    url: "/start",
+                    contentType: "application/json",
+                    data: JSON.stringify( {"data" : "datavalue"} ),
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
                 });
 
                 document.getElementById("start").disabled = true;
@@ -86,8 +96,10 @@
 
                 
             });
+
         }
 </script>
+
 
 </body>
 </html>

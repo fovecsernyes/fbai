@@ -1,5 +1,6 @@
 from database import Database
 from flask import *
+import random, json
 app = Flask(__name__)
 app.debug = True
 
@@ -17,9 +18,9 @@ def ApplyRequest():
 
 @app.route('/start', methods=['POST'])
 def StartRequest():
-    print(request.form)
-    status = "ack"
-    return render_template('index.html', status=status) #not working
+    data = request.get_json()
+    print(data)
+    return jsonify({"data_modositott" : "datavalue_modositott"})
     
 
 
