@@ -133,6 +133,11 @@
 
                 ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
+                ctx.fillStyle="black";
+                ctx.font="12px Monospace";
+                ctx.textAlign = "left";
+                ctx.fillText("GENERATION NUMBER", cvs.width/2, 10);
+
                 for (var i = 0; i < bird.length; i++) {
                     if (bird[i].alive) {
                         ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
@@ -151,7 +156,7 @@
                     ctx.fillStyle="black";
                     ctx.font="12px Monospace";
                     ctx.textAlign = "left";
-                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2, 10 + i*10);
+                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2, 20 + i*10);
                 }
                 //sometimes goes under 0 (tried with #180 birds)
                 if (alive > 0) {
