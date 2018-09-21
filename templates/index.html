@@ -25,6 +25,9 @@
 <canvas id="canvas" width="576" height="512"></canvas>
 
 <script>
+        var cvs = document.getElementById("canvas");
+        var ctx = cvs.getContext("2d");
+
         function dropdown(begin, end, add){
             var options = "";
             for(var i=begin; i<=end; i=i+add){
@@ -33,14 +36,144 @@
             return options;
         }
 
+        var gravity = parseInt("{{gravity}}")/30;
+        var population = parseInt("{{population}}");
+        var gap = parseInt("{{gap}}"); 
+
+        //game starts here*************************************//
+        var LoadImages = function () {
+            bg = new Image();
+            fg = new Image();
+
+            bg.src = "../static/images/bg.png";
+            fg.src = "../static/images/fg.png";
+
+            bird = new Image();
+            pipeNorth = new Image();
+            pipeSouth = new Image();
+            bird.src = "../static/images/bird.png";
+            pipeNorth.src = "../static/images/pipeNorth.png";
+            pipeSouth.src = "../static/images/pipeSouth.png";
+
+            return self;
+        }
+
+        var Bird = function () {
+            var self = {
+                bX: 10,
+                bY: 150,
+                //angle: 0,
+                fitness: 0,
+                alive: true
+            }
+
+            self.update = function () {
+                self.fitness++;
+                self.bY += gravity;
+                if (Math.floor(18 * Math.random()) % 18 === 0) {
+                    self.moveUp();
+                }
+            }
+
+            self.moveUp = function () {
+                self.bY -= 25;
+            }
+
+            self.kill = function () {
+                self.alive = false;
+            }
+
+            return self;
+        }
+
+        var Pipe = function (y) {
+            var self =
+            {
+                pX: cvs.width/2,
+                pY: y
+            }
+
+            self.update = function () {
+                self.pX--;
+            }
+            return self;
+        }
+
+        var Game = function () {
+            var img = LoadImages();
+
+            var pipe = [];
+            pipe[0] = Pipe(0);
+            alive = population;
+
+            var bird = [];
+            for (var i = 0; i < population; i++) {
+                bird[i] = Bird();
+            }
+
+            self.update = function () {
+                ctx.drawImage(img.bg, 0, 0);
+                for (var i = 0; i < pipe.length; i++) {
+                    if (pipe[i].pX < 0 - img.pipeNorth.width) {
+                        pipe.shift();
+                    }
+
+                    constant = img.pipeNorth.height + gap;
+                    ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
+                    ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
+
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(canvas.width/2, 0, canvas.width, canvas.height);
+                    
+                    pipe[i].update();
+
+                    if (pipe[i].pX == 125) {
+                        pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
+                    }
+
+                }
+
+                ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
+
+                for (var i = 0; i < bird.length; i++) {
+                    if (bird[i].alive) {
+                        ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
+                        bird[i].update();
+                        for (var j = 0; j < pipe.length; j++) {
+                            if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
+                                bird[i].kill();
+                                alive--;
+                            }
+                        }
+                    }
+                    var c = i + 1;
+                    if (c < 10 ){
+                        c = "0" + c;
+                    }
+                    ctx.fillStyle="black";
+                    ctx.font="12px Monospace";
+                    ctx.textAlign = "left";
+                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2, 10 + i*10);
+                }
+                //sometimes goes under 0 (tried with #180 birds)
+                if (alive > 0) {
+                    requestAnimationFrame(update);
+                }
+            }
+            return self;
+        }
+
+        function rungame(){
+            var game = Game();
+            game.update();
+        }
+        //game ends here*************************************//
+
         window.onload = function() {
             document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
             document.getElementById("rou_dd").innerHTML = dropdown(1,10,1);
-            
-            var cvs = document.getElementById("canvas");
-            var ctx = cvs.getContext("2d");
 
             var bg = new Image();
             bg.addEventListener('load', function() {
@@ -80,7 +213,8 @@
 
 
             document.getElementById("start").addEventListener("click", function(){
-                
+                document.getElementById("start").disabled = true;
+
                 $.ajax({
                     type: "POST",
                     url: "/start",
@@ -101,7 +235,8 @@
                                 async: false,
                                 success: function(response) {
                                         console.log(response);
-                                        console.log("fly the birds")
+                                        console.log("fly the birds");
+                                        await rungame();
 
                                         $.ajax({
                                             type: "POST",
@@ -116,7 +251,7 @@
                                             error: function(err) {
                                                 console.log(err || 'Error!');
                                             }
-                                        });      
+                                        });
                                 },
                                 error: function(err) {
                                     console.log(err || 'Error!');
@@ -127,16 +262,7 @@
                     error: function(err) {
                         console.log(err || 'Error!');
                     }
-                });
-
-                document.getElementById("start").disabled = true;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.font = "20px Monospace";
-                ctx.fillStyle = 'black';
-                ctx.textAlign = "center";
-                ctx.fillText("Game started!", cvs.width/2, 100);
-
-                
+                });                
             });
 
         }
