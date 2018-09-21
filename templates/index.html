@@ -114,18 +114,18 @@
                                                     console.log(response);
                                             },
                                             error: function(err) {
-                                                console.log(err);
+                                                console.log(err || 'Error!');
                                             }
                                         });      
                                 },
                                 error: function(err) {
-                                    console.log(err);
+                                    console.log(err || 'Error!');
                                 }
                             });
                         };
                     },
                     error: function(err) {
-                        console.log(err);
+                        console.log(err || 'Error!');
                     }
                 });
 
