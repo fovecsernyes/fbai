@@ -33,6 +33,23 @@
             }
             return options;
         }
+        function start_gen(){
+                $.ajax({
+                    type: "POST",
+                    url: "/startgen",
+                    contentType: "application/json",
+                    data: JSON.stringify( {"request" : "startgen"} ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        console.log(response);
+                        rungame();
+                    },
+                    error: function(err) {
+                        console.log(err || 'Error!');
+                    }
+                });
+        }
 
         var gravity = parseInt("{{gravity}}")/5;
         var population = parseInt("{{population}}");
@@ -166,11 +183,12 @@
                             type: "POST",
                             url: "/finishgen",
                             contentType: "application/json",
-                            data: JSON.stringify( {"finishgen" : "request"} ),
+                            data: JSON.stringify( {"request" : "finishgen"} ),
                             dataType: "json",
                             async: false,
                             success: function(response) {
                                 console.log(response);
+                                start_gen();
                             },
                             error: function(err) {
                                 console.log(err || 'Error!');
@@ -182,8 +200,8 @@
         }
 
         function rungame(){
-                var game = Game();
-                game.update();
+            var game = Game();
+            game.update();
         }
         //game ends here*************************************//
 
@@ -192,7 +210,7 @@
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
 
-            $('#gra_dd').val("10");
+            $('#gra_dd').val("6");
             $('#pop_dd').val("50");
             $('#gap_dd').val("120");
 
@@ -237,26 +255,11 @@
                         type: "POST",
                         url: "/start",
                         contentType: "application/json",
-                        data: JSON.stringify( {"start" : "request"} ),
+                        data: JSON.stringify( {"request" : "start"} ),
                         dataType: "json",
                         async: false,
                         success: function(response) {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/startgen",
-                                    contentType: "application/json",
-                                    data: JSON.stringify( {"startgen" : "request"} ),
-                                    dataType: "json",
-                                    async: false,
-                                    success: function(response) {
-                                            console.log(response);
-                                            console.log("fly the birds");
-                                            rungame();
-                                    },
-                                    error: function(err) {
-                                        console.log(err || 'Error!');
-                                    }
-                                });
+                            start_gen();
                         },
                         error: function(err) {
                             console.log(err || 'Error!');

@@ -4,7 +4,8 @@ import json
 app = Flask(__name__)
 app.debug = True
 
-running_params = { "gravity":0,
+running_params = { "generation":0,
+                "gravity":0,
                 "population":0,
                 "gap": 0,
                 "rounds": 0}
@@ -17,12 +18,14 @@ def GetRequest():
 
 @app.route('/', methods=['POST'])
 def ApplyRequest():
+    running_params['generation'] = 0
     running_params['gravity'] = request.form['gravity']
     running_params['population'] = request.form['population']
     running_params['gap'] = request.form['gap']
 
     database_status = database.create_tables()
-    return render_template('index.html', gravity=running_params['gravity'],
+    return render_template('index.html', generation=running_params['generation'],
+                                        gravity=running_params['gravity'],
                                         population=running_params['population'],
                                         gap=running_params['gap'],
                                         database_status=database_status)
@@ -35,13 +38,14 @@ def StartRequest():
 
 @app.route('/startgen', methods=['POST'])
 def StartGenRequest():
-    print("Generation Started")
-    return jsonify({"startgen":"respond"})
+    running_params['generation'] += 1
+    print(str(running_params['generation'])+ ". generation started")
+    return jsonify({"generation":running_params['generation']})
 
 @app.route('/finishgen', methods=['POST'])
 def FinishGenRequest():
-    print("finished generation")
-    return jsonify({"finishgen":"respond"})
+    print(str(running_params['generation'])+ ". generation finished")
+    return jsonify({"respond":"finishgen"})
 
 if __name__ == "__main__":
     database = Database()
