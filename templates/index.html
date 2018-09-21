@@ -43,7 +43,7 @@
                     async: false,
                     success: function(response) {
                         console.log(response);
-                        rungame();
+                        rungame(response);
                     },
                     error: function(err) {
                         console.log(err || 'Error!');
@@ -59,9 +59,11 @@
         var LoadImages = function () {
             bg = new Image();
             fg = new Image();
+            welcome = new Image();
 
             bg.src = "../static/images/bg.png";
             fg.src = "../static/images/fg.png";
+            welcome.src="../static/images/welcome.png"
 
             bird = new Image();
             pipeNorth = new Image();
@@ -114,7 +116,7 @@
             return self;
         }
 
-        var Game = function () {
+        var Game = function (response) {
             var img = LoadImages();
 
             var pipe = [];
@@ -132,13 +134,14 @@
                     if (pipe[i].pX < 0 - img.pipeNorth.width) {
                         pipe.shift();
                     }
-
+                    
                     constant = img.pipeNorth.height + gap;
                     ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
                     ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
-
-                    ctx.fillStyle = "white";
-                    ctx.fillRect(canvas.width/2, 0, canvas.width, canvas.height);
+                    
+                    ctx.drawImage(img.welcome, canvas.width/2, 0);
+                    //ctx.fillStyle = "white";
+                    //ctx.fillRect(canvas.width/2, 0, canvas.width, canvas.height);
                     
                     pipe[i].update();
 
@@ -147,13 +150,12 @@
                     }
 
                 }
-
                 ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
-                ctx.fillStyle="black";
+                ctx.fillStyle="blue";
                 ctx.font="12px Monospace";
                 ctx.textAlign = "left";
-                ctx.fillText("GENERATION NUMBER", cvs.width/2, 10);
+                ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
                 for (var i = 0; i < bird.length; i++) {
                     if (bird[i].alive) {
@@ -173,7 +175,12 @@
                     ctx.fillStyle="black";
                     ctx.font="12px Monospace";
                     ctx.textAlign = "left";
-                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2, 20 + i*10);
+                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 20 + i*10);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(cvs.width/2,0);
+                    ctx.lineTo(cvs.width/2,cvs.height);
+                    ctx.stroke();
                 }
                 //sometimes goes under 0 (tried with #180 birds)
                 if (alive > 0) {
@@ -199,8 +206,8 @@
             return self;
         }
 
-        function rungame(){
-            var game = Game();
+        function rungame(response){
+            var game = Game(response);
             game.update();
         }
         //game ends here*************************************//
