@@ -13,8 +13,6 @@
         <select name=population method="POST" action="/" id="pop_dd"></select>
     Gap:
         <select name=gap method="POST" action="/" id="gap_dd"></select>
-    Rounds:
-        <select name=rounds method="POST" action="/" id="rou_dd"></select>
 
     <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
     <input id="start" type="button" value="Start" />
@@ -36,9 +34,9 @@
             return options;
         }
 
-        var gravity = parseInt("{{gravity}}")/30;
+        var gravity = parseInt("{{gravity}}")/5;
         var population = parseInt("{{population}}");
-        var gap = parseInt("{{gap}}"); 
+        var gap = parseInt("{{gap}}");
 
         //game starts here*************************************//
         var LoadImages = function () {
@@ -158,14 +156,29 @@
                 //sometimes goes under 0 (tried with #180 birds)
                 if (alive > 0) {
                     requestAnimationFrame(update);
+                }else{
+                    $.ajax({
+                            type: "POST",
+                            url: "/finishgen",
+                            contentType: "application/json",
+                            data: JSON.stringify( {"finishgen" : "request"} ),
+                            dataType: "json",
+                            async: false,
+                            success: function(response) {
+                                console.log(response);
+                            },
+                            error: function(err) {
+                                console.log(err || 'Error!');
+                            }
+                        });
                 }
             }
             return self;
         }
 
         function rungame(){
-            var game = Game();
-            game.update();
+                var game = Game();
+                game.update();
         }
         //game ends here*************************************//
 
@@ -173,7 +186,10 @@
             document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
-            document.getElementById("rou_dd").innerHTML = dropdown(1,10,1);
+
+            $('#gra_dd').val("10");
+            $('#pop_dd').val("50");
+            $('#gap_dd').val("120");
 
             var bg = new Image();
             bg.addEventListener('load', function() {
@@ -200,13 +216,11 @@
                     $('#gra_dd').val("{{gravity}}")
                     $('#pop_dd').val("{{population}}")
                     $('#gap_dd').val("{{gap}}")
-                    $('#rou_dd').val("{{rounds}}")
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;
                     document.getElementById("gra_dd").disabled = true;
                     document.getElementById("pop_dd").disabled = true;
                     document.getElementById("gap_dd").disabled = true;
-                    document.getElementById("rou_dd").disabled = true;
                 }
             }, false);
             bg.src = "../static/images/welcome.png";
@@ -214,55 +228,35 @@
 
             document.getElementById("start").addEventListener("click", function(){
                 document.getElementById("start").disabled = true;
-
-                $.ajax({
-                    type: "POST",
-                    url: "/start",
-                    contentType: "application/json",
-                    data: JSON.stringify( {"command" : "START"} ),
-                    dataType: "json",
-                    async: false,
-                    success: function(response) {
-                        for( var i = 0; i < response["rounds"]; i++){
-                            console.log(i + ". round");
-                            
-                            $.ajax({
-                                type: "POST",
-                                url: "/round",
-                                contentType: "application/json",
-                                data: JSON.stringify( {"round" : i} ),
-                                dataType: "json",
-                                async: false,
-                                success: function(response) {
-                                        console.log(response);
-                                        console.log("fly the birds");
-                                        await rungame();
-
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "/finishround",
-                                            contentType: "application/json",
-                                            data: JSON.stringify( {"roundfinished" : i} ),
-                                            dataType: "json",
-                                            async: false,
-                                            success: function(response) {
-                                                    console.log(response);
-                                            },
-                                            error: function(err) {
-                                                console.log(err || 'Error!');
-                                            }
-                                        });
-                                },
-                                error: function(err) {
-                                    console.log(err || 'Error!');
-                                }
-                            });
-                        };
-                    },
-                    error: function(err) {
-                        console.log(err || 'Error!');
-                    }
-                });                
+                    $.ajax({
+                        type: "POST",
+                        url: "/start",
+                        contentType: "application/json",
+                        data: JSON.stringify( {"start" : "request"} ),
+                        dataType: "json",
+                        async: false,
+                        success: function(response) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/startgen",
+                                    contentType: "application/json",
+                                    data: JSON.stringify( {"startgen" : "request"} ),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function(response) {
+                                            console.log(response);
+                                            console.log("fly the birds");
+                                            rungame();
+                                    },
+                                    error: function(err) {
+                                        console.log(err || 'Error!');
+                                    }
+                                });
+                        },
+                        error: function(err) {
+                            console.log(err || 'Error!');
+                        }
+                    });                
             });
 
         }
