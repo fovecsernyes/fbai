@@ -1,3 +1,14 @@
+var cvs = document.getElementById("canvas");
+var ctx = cvs.getContext("2d");
+
+function dropdown(begin, end, add){
+    var options = "";
+    for(var i=begin; i<=end; i=i+add){
+        options += "<option>"+ i +"</option>";
+    }
+    return options;
+}
+
 function start_gen(){
         $.ajax({
             type: "POST",
@@ -15,7 +26,6 @@ function start_gen(){
             }
         });
 }
-
 
 var gravity = parseInt("{{gravity}}")/5;
 var population = parseInt("{{population}}");
