@@ -8,6 +8,7 @@ running_params = { "generation":0,
                 "gravity":0,
                 "population":0,
                 "gap": 0,
+                "distance": 0,
                 "rounds": 0}
 
 
@@ -22,12 +23,14 @@ def ApplyRequest():
     running_params['gravity'] = request.form['gravity']
     running_params['population'] = request.form['population']
     running_params['gap'] = request.form['gap']
+    running_params['distance'] = request.form['distance']
 
     database_status = database.create_tables()
     return render_template('index.html', generation=running_params['generation'],
                                         gravity=running_params['gravity'],
                                         population=running_params['population'],
                                         gap=running_params['gap'],
+                                        distance=running_params['distance'],
                                         database_status=database_status)
 
 
