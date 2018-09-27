@@ -4,8 +4,79 @@
     <meta charset="UTF-8">
     <title>Flappy Bird AI learning</title>
     <script type=text/javascript src="{{url_for('static', filename='jquery.min.js') }}"></script>
+    <script>
+        function onLoadFunction() {
+            document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
+            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
+            document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
+            document.getElementById("dis_dd").innerHTML = dropdown(120,260,20);
+    
+            $('#gra_dd').val("6");
+            $('#pop_dd').val("50");
+            $('#gap_dd').val("120");
+            $('#dis_dd').val("160");
+    
+            var bg = new Image();
+            bg.addEventListener('load', function() {
+                //background
+                ctx.drawImage(bg,0,0);
+                //welcome
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'white';
+                ctx.textAlign = "center";
+                ctx.fillText("Welcome!", cvs.width/2, 100);
+                //description
+                ctx.font = "15px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
+                ctx.fillText("Set the running parameters below, then click Start!", cvs.width/2, 175);
+                //details
+                ctx.font = "10px Monospace";
+                ctx.fillStyle = "grey";
+                ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 20);
+                ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
+    
+                document.getElementById("start").disabled = true;
+                if ( "{{database_status}}" == "OK"){
+                    $('#gra_dd').val("{{gravity}}")
+                    $('#pop_dd').val("{{population}}")
+                    $('#gap_dd').val("{{gap}}")
+                    $('#dis_dd').val("{{distance}}")
+    
+                    document.getElementById("apply").disabled = true;
+                    document.getElementById("start").disabled = false;
+                    document.getElementById("gra_dd").disabled = true;
+                    document.getElementById("pop_dd").disabled = true;
+                    document.getElementById("gap_dd").disabled = true;
+                    document.getElementById("dis_dd").disabled = true;
+                }
+            }, false);
+            bg.src = "../static/images/welcome.png";
+    
+    
+            document.getElementById("start").addEventListener("click", function(){
+                document.getElementById("start").disabled = true;
+                $.ajax({
+                    type: "POST",
+                    url: "/start",
+                    contentType: "application/json",
+                    data: JSON.stringify( {"request" : "start"} ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        start_gen();
+                    },
+                    error: function(err) {
+                        console.log(err || 'Error!');
+                    }
+                });                
+            });
+            
+        }
+    </script>
 </head>
-<body>
+
+<body onload="onLoadFunction();">
     <!-- ********** HTML FORM BEGIN ********** -->
 <form action="/" method = "POST">
     Gravity:
@@ -216,77 +287,6 @@
         }
     //********** GAME MODUL END **********//
 
-
-    //********** WELCOME SCREEN BEGIN **********//
-    window.onload = function() {
-        document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
-        document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
-        document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
-        document.getElementById("dis_dd").innerHTML = dropdown(120,260,20);
-
-        $('#gra_dd').val("6");
-        $('#pop_dd').val("50");
-        $('#gap_dd').val("120");
-        $('#dis_dd').val("160");
-
-        var bg = new Image();
-        bg.addEventListener('load', function() {
-            //background
-            ctx.drawImage(bg,0,0);
-            //welcome
-            ctx.font = "20px Monospace";
-            ctx.fillStyle = 'white';
-            ctx.textAlign = "center";
-            ctx.fillText("Welcome!", cvs.width/2, 100);
-            //description
-            ctx.font = "15px Monospace";
-            ctx.fillStyle = 'black';
-            ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
-            ctx.fillText("Set the running parameters below, then click Start!", cvs.width/2, 175);
-            //details
-            ctx.font = "10px Monospace";
-            ctx.fillStyle = "grey";
-            ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 20);
-            ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
-
-            document.getElementById("start").disabled = true;
-            if ( "{{database_status}}" == "OK"){
-                $('#gra_dd').val("{{gravity}}")
-                $('#pop_dd').val("{{population}}")
-                $('#gap_dd').val("{{gap}}")
-                $('#dis_dd').val("{{distance}}")
-
-                document.getElementById("apply").disabled = true;
-                document.getElementById("start").disabled = false;
-                document.getElementById("gra_dd").disabled = true;
-                document.getElementById("pop_dd").disabled = true;
-                document.getElementById("gap_dd").disabled = true;
-                document.getElementById("dis_dd").disabled = true;
-            }
-        }, false);
-        bg.src = "../static/images/welcome.png";
-
-
-        document.getElementById("start").addEventListener("click", function(){
-            document.getElementById("start").disabled = true;
-            $.ajax({
-                type: "POST",
-                url: "/start",
-                contentType: "application/json",
-                data: JSON.stringify( {"request" : "start"} ),
-                dataType: "json",
-                async: false,
-                success: function(response) {
-                    start_gen();
-                },
-                error: function(err) {
-                    console.log(err || 'Error!');
-                }
-            });                
-        });
-        
-    }
-    //********** WELCOME SCREEN END **********//
 </script>
 
 

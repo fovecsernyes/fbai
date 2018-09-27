@@ -19,13 +19,16 @@ def GetRequest():
 
 @app.route('/', methods=['POST'])
 def ApplyRequest():
+    database_status = database.create_tables()
+
     running_params['generation'] = 0
     running_params['gravity'] = request.form['gravity']
     running_params['population'] = request.form['population']
     running_params['gap'] = request.form['gap']
     running_params['distance'] = request.form['distance']
 
-    database_status = database.create_tables()
+    print("Parameters: " + str(running_params))
+
     return render_template('index.html', generation=running_params['generation'],
                                         gravity=running_params['gravity'],
                                         population=running_params['population'],
