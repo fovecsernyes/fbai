@@ -1,6 +1,3 @@
-var cvs = document.getElementById("canvas");
-var ctx = cvs.getContext("2d");
-
 function dropdown(begin, end, add){
     var options = "";
     for(var i=begin; i<=end; i=i+add){
@@ -27,26 +24,21 @@ function start_gen(){
         });
 }
 
-var gravity = parseInt("{{gravity}}")/5;
-var population = parseInt("{{population}}");
-var gap = parseInt("{{gap}}");
-var distance = 288 - parseInt("{{distance}}");
-
 var LoadImages = function () {
     bg = new Image();
     fg = new Image();
     welcome = new Image();
 
-    bg.src = "../static/images/bg.png";
-    fg.src = "../static/images/fg.png";
-    welcome.src="../static/images/welcome.png"
+    bg.src = "/static/images/bg.png";
+    fg.src = "/static/images/fg.png";
+    welcome.src="/static/images/welcome.png"
 
     bird = new Image();
     pipeNorth = new Image();
     pipeSouth = new Image();
-    bird.src = "../static/images/bird.png";
-    pipeNorth.src = "../static/images/pipeNorth.png";
-    pipeSouth.src = "../static/images/pipeSouth.png";
+    bird.src = "/static/images/bird.png";
+    pipeNorth.src = "/static/images/pipeNorth.png";
+    pipeSouth.src = "/static/images/pipeSouth.png";
 
     return self;
 }
@@ -59,7 +51,7 @@ var Bird = function () {
         alive: true
     }
 
-    self.update = function () {
+    self.update = function (gravity) {
         self.fitness++;
         self.bY += gravity;
         if (Math.floor(18 * Math.random()) % 18 === 0) {
@@ -92,6 +84,13 @@ var Pipe = function (y) {
 }
 
 var Game = function (response) {
+    var gravity = parseInt(response["gravity"])/5;
+    var population = parseInt(response["population"]);
+    var gap = parseInt(response["gap"]);
+    var distance = 288 - parseInt(response["distance"]);
+
+    console.log(gravity,population,gap,distance);
+
     var img = LoadImages();
 
     var pipe = [];
@@ -133,7 +132,7 @@ var Game = function (response) {
         for (var i = 0; i < bird.length; i++) {
             if (bird[i].alive) {
                 ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
-                bird[i].update();
+                bird[i].update(gravity);
                 for (var j = 0; j < pipe.length; j++) {
                     if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                         bird[i].kill();

@@ -8,8 +8,8 @@ running_params = { "generation":0,
                 "gravity":0,
                 "population":0,
                 "gap": 0,
-                "distance": 0,
-                "rounds": 0}
+                "distance": 0
+                }
 
 
 @app.route('/', methods=['GET'])
@@ -46,7 +46,7 @@ def StartRequest():
 def StartGenRequest():
     running_params['generation'] += 1
     print(str(running_params['generation'])+ ". generation started")
-    return jsonify({"generation":running_params['generation']})
+    return jsonify(running_params)
 
 @app.route('/finishgen', methods=['POST'])
 def FinishGenRequest():
