@@ -89,8 +89,6 @@ var Game = function (response) {
     var gap = parseInt(response["gap"]);
     var distance = 288 - parseInt(response["distance"]);
 
-    console.log(gravity,population,gap,distance);
-
     var img = LoadImages();
 
     var pipe = [];
