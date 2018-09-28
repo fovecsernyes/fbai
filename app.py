@@ -11,6 +11,22 @@ running_params = { "generation":0,
                 "distance": 0
                 }
 
+def geneticAlgorithm():
+    print("genetic algorithm called")
+    selection()
+    crossover()
+    mutation()
+    return
+
+def selection():
+    print("\t*selection called")
+
+def crossover():
+    print("\t*crossover called")
+
+def mutation():
+    print("\t*mutation called")
+
 
 @app.route('/', methods=['GET'])
 def GetRequest():
@@ -22,11 +38,11 @@ def ApplyRequest():
     database_status = database.create_tables()
 
     running_params['generation'] = 0
-    running_params['gravity'] = request.form['gravity']
-    running_params['population'] = request.form['population']
-    running_params['gap'] = request.form['gap']
-    running_params['distance'] = request.form['distance']
-
+    running_params['gravity'] = int(request.form['gravity'])
+    running_params['population'] = int(request.form['population'])
+    running_params['gap'] = int(request.form['gap'])
+    running_params['distance'] = int(request.form['distance'])
+ 
     print("Parameters: " + str(running_params))
 
     return render_template('index.html', generation=running_params['generation'],
@@ -39,13 +55,18 @@ def ApplyRequest():
 
 @app.route('/start', methods=['POST'])
 def StartRequest():
-    print("Game started")
+    print("Generating neural networks")
     return jsonify(running_params)
 
 @app.route('/startgen', methods=['POST'])
 def StartGenRequest():
+    if running_params['generation']:
+        geneticAlgorithm()
+
     running_params['generation'] += 1
+
     print(str(running_params['generation'])+ ". generation started")
+
     return jsonify(running_params)
 
 @app.route('/finishgen', methods=['POST'])

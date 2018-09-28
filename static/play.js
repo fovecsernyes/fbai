@@ -84,10 +84,10 @@ var Pipe = function (y) {
 }
 
 var Game = function (response) {
-    var gravity = parseInt(response["gravity"])/5;
-    var population = parseInt(response["population"]);
-    var gap = parseInt(response["gap"]);
-    var distance = 288 - parseInt(response["distance"]);
+    var gravity = response["gravity"]/5;
+    var population = response["population"];
+    var gap = response["gap"];
+    var distance = 288 - response["distance"];
 
     var img = LoadImages();
 

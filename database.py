@@ -23,6 +23,14 @@ class Database(object):
 
         commands = (
             """
+             CREATE TABLE IF NOT EXISTS cycle (
+                 id SERIAL PRIMARY KEY,
+                 parameters TEXT NOT NULL,
+                 parent_id INTEGER REFERENCES cycle UNIQUE,
+                 sum_fitness INTEGER NOT NULL
+             )
+             """,
+            """
             CREATE TABLE IF NOT EXISTS bird (
                 id  SERIAL PRIMARY KEY,
                 neural_network TEXT NOT NULL,
