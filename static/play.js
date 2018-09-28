@@ -1,4 +1,4 @@
-function dropdown(begin, end, add){
+var dropdown = function(begin, end, add){
     var options = "";
     for(var i=begin; i<=end; i=i+add){
         options += "<option>"+ i +"</option>";
@@ -6,7 +6,7 @@ function dropdown(begin, end, add){
     return options;
 }
 
-function start_gen(){
+var start_gen = function(){
         $.ajax({
             type: "POST",
             url: "/startgen",
@@ -178,7 +178,7 @@ var Game = function (response) {
     return self;
 }
 
-function rungame(response){
+var rungame =function(response){
     var game = Game(response);
     game.update();
 }
