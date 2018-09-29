@@ -84,6 +84,9 @@ var Pipe = function (y) {
 }
 
 var Game = function (response) {
+
+    var fitness_scores = [];
+
     var gravity = response["gravity"]/5;
     var population = response["population"];
     var gap = response["gap"];
@@ -134,6 +137,7 @@ var Game = function (response) {
                 for (var j = 0; j < pipe.length; j++) {
                     if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                         bird[i].kill();
+                        fitness_scores[i] = bird[i].fitness;
                         alive--;
                     }
                 }
@@ -162,7 +166,7 @@ var Game = function (response) {
                     type: "POST",
                     url: "/finishgen",
                     contentType: "application/json",
-                    data: JSON.stringify( {"request" : "finishgen"} ),
+                    data: JSON.stringify( fitness_scores ),
                     dataType: "json",
                     async: false,
                     success: function(response) {

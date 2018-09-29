@@ -52,13 +52,16 @@ def StartGenRequest():
     if running_params['generation']:
         geneticAlgorithm(database)
     running_params['generation'] += 1
-    print(str(running_params['generation'])+ ". generation started")
+
     return jsonify(running_params)
 
 #handling post requests at '/finishgen'. it is called after every generation
 @app.route('/finishgen', methods=['POST'])
 def FinishGenRequest():
-    print(str(running_params['generation'])+ ". generation finished")
+    fitness_scores = []
+    for _ in request.json:
+        fitness_scores.append (  (_,))
+    database.insert_fitness(fitness_scores)
     return jsonify({"respond":"finishgen"})
 
 #main function

@@ -64,3 +64,17 @@ class Database(object):
         finally:
             if conn is not None:
                 conn.close()
+
+    def insert_fitness(self, fitness_list):
+        sql = "INSERT INTO fitness(fitness) VALUES(%s)"
+        conn = None
+        try:
+            cur = self.conn.cursor()
+            cur.executemany(sql,fitness_list)
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
