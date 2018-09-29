@@ -23,19 +23,15 @@ class Database(object):
 
         commands = (
             """
-             CREATE TABLE IF NOT EXISTS cycle (
-                 id SERIAL PRIMARY KEY,
-                 parameters TEXT NOT NULL,
-                 parent_id INTEGER REFERENCES cycle UNIQUE,
-                 sum_fitness INTEGER NOT NULL
-             )
-             """,
+            CREATE TABLE IF NOT EXISTS cycle (
+                id SERIAL PRIMARY KEY,
+                parameters TEXT NOT NULL
+            )
+            """,
             """
             CREATE TABLE IF NOT EXISTS bird (
                 id  SERIAL PRIMARY KEY,
-                neural_network TEXT NOT NULL,
-                cycle_id SERIAL,
-                FOREIGN KEY (cycle_id) REFERENCES cycle(parent_id)
+                neural_network TEXT NOT NULL
             )
             """,
             """
@@ -43,9 +39,7 @@ class Database(object):
                 id SERIAL PRIMARY KEY,
                 fitness INTEGER,
                 bird_id INTEGER,
-                cycle_id INTEGER,
-                FOREIGN KEY (bird_id) REFERENCES bird(id),
-                FOREIGN KEY (cycle_id) REFERENCES cycle(id)
+                cycle_id INTEGER
             )
             """
             )
@@ -56,3 +50,17 @@ class Database(object):
         self.conn.commit()
         print("Database intialized")
         return "OK"
+
+    def insert_bird(self, bird_list):
+        sql = "INSERT INTO bird(neural_network) VALUES(%s)"
+        conn = None
+        try:
+            cur = self.conn.cursor()
+            cur.executemany(sql,bird_list)
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()

@@ -1,5 +1,7 @@
 from flask import *
 import json
+import random
+import string
 from agent import *
 from database import Database
 #initializing flask
@@ -36,7 +38,12 @@ def ApplyRequest():
 #handling post requests at '/'. it is called when 'Start' button is pressed
 @app.route('/start', methods=['POST'])
 def StartRequest():
-    print("Generating neural networks")
+    neural_networks = []
+    for _ in range(running_params['population']):
+        neural_networks.append( (''.join(random.choice(string.ascii_letters) for __ in range(10)),) )
+
+    database.insert_bird(neural_networks)
+    
     return jsonify(running_params)
 
 #handling post requests at '/startgen'. it is called before every generation
