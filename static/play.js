@@ -43,10 +43,11 @@ var LoadImages = function () {
     return self;
 }
 
-var Bird = function () {
+var Bird = function (dbId) {
     var self = {
         bX: 10,
         bY: 150,
+        id: dbId,
         fitness: 0,
         alive: true
     }
@@ -84,10 +85,11 @@ var Pipe = function (y) {
 }
 
 var Game = function (response) {
-
     var fitness_scores = [];
 
     var gravity = response["gravity"]/5;
+    // it should contain the database id of the bird from the response
+    // temporarly the local i variable is used
     var population = response["population"];
     var gap = response["gap"];
     var distance = 288 - response["distance"];
@@ -100,7 +102,7 @@ var Game = function (response) {
 
     var bird = [];
     for (var i = 0; i < population; i++) {
-        bird[i] = Bird();
+        bird[i] = Bird(i);
     }
 
     self.update = function () {
@@ -166,12 +168,13 @@ var Game = function (response) {
                     type: "POST",
                     url: "/finishgen",
                     contentType: "application/json",
+                    // TODO: it should contain the database id of the bird (Bird.id)
                     data: JSON.stringify( fitness_scores ),
                     dataType: "json",
                     async: false,
                     success: function(response) {
                         console.log(response);
-                        start_gen();
+                        //start_gen();
                     },
                     error: function(err) {
                         console.log(err || 'Error!');

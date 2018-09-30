@@ -39,11 +39,17 @@ def ApplyRequest():
 @app.route('/start', methods=['POST'])
 def StartRequest():
     neural_networks = []
+    bird_ids = []
     for _ in range(running_params['population']):
-        neural_networks.append( (''.join(random.choice(string.ascii_letters) for __ in range(10)),) )
+        # TODO: create parameters to create cycle
+        cycle_id = database.insert_cycle('')
+        # TODO: create randomless neural_network
+        neural_network = (''.join(random.choice(string.ascii_letters) for __ in range(10)),)
+        neural_networks.append(neural_network)
+        bird_id = database.insert_bird(cycle_id, neural_network)
+        bird_ids.append(bird_id)
 
-    database.insert_bird(neural_networks)
-    
+    # TODO: add bird_ids and neural_networks to JSON answer
     return jsonify(running_params)
 
 #handling post requests at '/startgen'. it is called before every generation
@@ -60,8 +66,11 @@ def StartGenRequest():
 def FinishGenRequest():
     fitness_scores = []
     for _ in request.json:
-        fitness_scores.append (  (_,))
-    database.insert_fitness(fitness_scores)
+        fitness_score = _
+        fitness_scores.append(_)
+        # TODO: add bird_ids from JSON answer
+        bird_id = 1
+        database.insert_fitness(bird_id, fitness_score)
     return jsonify({"respond":"finishgen"})
 
 #main function
