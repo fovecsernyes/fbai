@@ -93,6 +93,7 @@ var Game = function (response) {
     var population = response["population"];
     var gap = response["gap"];
     var distance = 288 - response["distance"];
+    var neural_networks = JSON.parse(response["neural_networks"]);
 
     var img = LoadImages();
 
@@ -101,7 +102,7 @@ var Game = function (response) {
     alive = population;
 
     var bird = [];
-    for (var i = 0; i < population; i++) {
+    for (var i = neural_networks[0][0]; i <= neural_networks[population-1][0]; i++) {
         bird[i] = Bird(i);
     }
 
@@ -132,19 +133,19 @@ var Game = function (response) {
         ctx.textAlign = "left";
         ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
-        for (var i = 0; i < bird.length; i++) {
+        for (var i = parseInt(neural_networks[0][0]); i <= parseInt(neural_networks[population-1][0]); i++) {
             if (bird[i].alive) {
                 ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
                 bird[i].update(gravity);
                 for (var j = 0; j < pipe.length; j++) {
                     if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                         bird[i].kill();
-                        fitness_scores[i] = bird[i].fitness;
+                        fitness_scores.push(i + "#" + bird[i].fitness);
                         alive--;
                     }
                 }
             }
-            var c = i + 1;
+            var c = i - neural_networks[0][0] + 1;
             if (c < 10 ){
                 c = "0" + c;
             }
@@ -155,7 +156,7 @@ var Game = function (response) {
             }else{
                 ctx.fillStyle= "red";
             }
-            ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 20 + i*10);
+            ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 10 + c*10);
             ctx.beginPath();
             ctx.moveTo(cvs.width/2,0);
             ctx.lineTo(cvs.width/2,cvs.height);

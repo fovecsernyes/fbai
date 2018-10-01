@@ -116,7 +116,6 @@ class Database(object):
         sqlUpdate = """UPDATE public.cycle
                         SET parent_id = %s
                         WHERE id = %s"""
-        conn = None
         updated_rows = 0
         cycle_id = 0
         try:
@@ -133,8 +132,8 @@ class Database(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is None:
+                self.conn.close()
         
         if updated_rows is None or updated_rows == 0:
             cycle_id = -1
@@ -146,7 +145,6 @@ class Database(object):
         sqlUpdate = """UPDATE public.bird
                         SET neural_network = %s
                         WHERE id = %s"""
-        conn = None
         updated_rows = 0
         bird_id = 0
         try:
@@ -163,8 +161,8 @@ class Database(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is None:
+                self.conn.close()
         
         if updated_rows is None or updated_rows == 0:
             bird_id = -1
@@ -176,7 +174,7 @@ class Database(object):
         sqlUpdate = """UPDATE public.fitness
                         SET fitness_score = %s
                         WHERE id = %s"""
-        conn = None
+
         updated_rows = 0
         fitness_id = 0
         try:
@@ -193,9 +191,29 @@ class Database(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is None:
+                self.conn.close()
         
         if updated_rows is None or updated_rows == 0:
             fitness_id = -1
         return fitness_id
+
+    def select_bird(self, population):
+        sqlSelect = """SELECT id, neural_network FROM
+                    (SELECT * FROM bird ORDER BY id DESC LIMIT %s) AS selectbird
+                    ORDER BY id ASC;"""
+
+        try:
+            print("select_bird")
+            cur = self.conn.cursor()
+            cur.execute(sqlSelect, (population,))
+            bird_ids = cur.fetchall()
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if self.conn is None:
+                self.conn.close()
+        return bird_ids
+
