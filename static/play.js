@@ -43,11 +43,12 @@ var LoadImages = function () {
     return self;
 }
 
-var Bird = function (dbId) {
+var Bird = function (db_id, db_neural_network) {
     var self = {
         bX: 10,
         bY: 150,
-        id: dbId,
+        id: db_id,
+        neural_network: db_neural_network,
         fitness: 0,
         alive: true
     }
@@ -55,13 +56,14 @@ var Bird = function (dbId) {
     self.update = function (gravity) {
         self.fitness++;
         self.bY += gravity;
-        if (Math.floor(18 * Math.random()) % 18 === 0) {
-            self.moveUp();
-        }
+        self.moveUp();
     }
-
+    // TODO neural network evolution goes here
     self.moveUp = function () {
-        self.bY -= 25;
+        //do something with self.neural_network
+        if (Math.floor(18 * Math.random()) % 18 === 0) {
+            self.bY -= 25;
+        }
     }
 
     self.kill = function () {
@@ -88,12 +90,13 @@ var Game = function (response) {
     var fitness_scores = [];
 
     var gravity = response["gravity"]/5;
-    // it should contain the database id of the bird from the response
-    // temporarly the local i variable is used
     var population = response["population"];
     var gap = response["gap"];
     var distance = 288 - response["distance"];
     var neural_networks = JSON.parse(response["neural_networks"]);
+
+    var bird_begin = parseInt(neural_networks[0][0]);
+    var bird_end = parseInt(neural_networks[population-1][0]);
 
     var img = LoadImages();
 
@@ -102,8 +105,8 @@ var Game = function (response) {
     alive = population;
 
     var bird = [];
-    for (var i = neural_networks[0][0]; i <= neural_networks[population-1][0]; i++) {
-        bird[i] = Bird(i);
+    for (var i = bird_begin; i <= bird_end; i++) {
+        bird[i] = Bird(i,neural_networks[i-bird_begin][1]);
     }
 
     self.update = function () {
@@ -133,19 +136,23 @@ var Game = function (response) {
         ctx.textAlign = "left";
         ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
-        for (var i = parseInt(neural_networks[0][0]); i <= parseInt(neural_networks[population-1][0]); i++) {
+        for (var i = bird_begin; i <= bird_end; i++) {
             if (bird[i].alive) {
                 ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
                 bird[i].update(gravity);
                 for (var j = 0; j < pipe.length; j++) {
                     if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                         bird[i].kill();
-                        fitness_scores.push(i + "#" + bird[i].fitness);
+                        if (fitness_scores[i] == null){
+                            fitness_scores[i] = bird[i].fitness;
+                        }else{
+                            fitness_scores[i] += bird[i].fitness;
+                        }
                         alive--;
                     }
                 }
             }
-            var c = i - neural_networks[0][0] + 1;
+            var c = i - bird_begin + 1;
             if (c < 10 ){
                 c = "0" + c;
             }
@@ -165,12 +172,17 @@ var Game = function (response) {
         if (alive > 0) {
             requestAnimationFrame(update);
         }else{
+            response = [];
+            for (var i = bird_begin; i <= bird_end; i++){
+                response.push(i + "#" + bird[i].fitness);
+            }
+            
             $.ajax({
                     type: "POST",
                     url: "/finishgen",
                     contentType: "application/json",
                     // TODO: it should contain the database id of the bird (Bird.id)
-                    data: JSON.stringify( fitness_scores ),
+                    data: JSON.stringify( response ),
                     dataType: "json",
                     async: false,
                     success: function(response) {
