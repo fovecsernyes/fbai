@@ -119,12 +119,12 @@ class Database(object):
         updated_rows = 0
         cycle_id = 0
         try:
-            print("insert_cycle")
+            #print("insert_cycle")
             cur = self.conn.cursor()
             cur.execute(sqlInsert, (parameters,))
             cycle_id = cur.fetchone()[0]
             self.conn.commit()
-            print("update_cycle")
+            #print("update_cycle")
             cur.execute(sqlUpdate, (cycle_id, cycle_id))
             updated_rows = cur.rowcount
             self.conn.commit()
@@ -149,11 +149,11 @@ class Database(object):
         bird_id = 0
         try:
             cur = self.conn.cursor()
-            print("insert_bird")
+            #print("insert_bird")
             cur.execute(sqlInsert, (cycle_id,))
             bird_id = cur.fetchone()[0]
             self.conn.commit()
-            print("update_bird")
+            #print("update_bird")
             cur.execute(sqlUpdate, (neural_network, bird_id))
             updated_rows = cur.rowcount
             self.conn.commit()
@@ -178,12 +178,12 @@ class Database(object):
         updated_rows = 0
         fitness_id = 0
         try:
-            print("insert_fitness")
+            #print("insert_fitness")
             cur = self.conn.cursor()
             cur.execute(sqlInsert, (bird_id,))
             fitness_id = cur.fetchone()[0]
             self.conn.commit()
-            print("update_fitness")
+            #print("update_fitness")
             cur.execute(sqlUpdate, (fitness_score, fitness_id))
             updated_rows = cur.rowcount
             self.conn.commit()
@@ -199,12 +199,12 @@ class Database(object):
         return fitness_id
 
     def select_bird(self, population):
-        sqlSelect = """SELECT id, neural_network FROM
+        sqlSelect = """SELECT id FROM
                     (SELECT * FROM bird ORDER BY id DESC LIMIT %s) AS selectbird
                     ORDER BY id ASC;"""
 
         try:
-            print("select_bird")
+            #print("select_bird")
             cur = self.conn.cursor()
             cur.execute(sqlSelect, (population,))
             bird_ids = cur.fetchall()

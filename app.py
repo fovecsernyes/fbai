@@ -1,9 +1,7 @@
 from flask import *
-import torch
 import json
-import random
-import string
-from agent import *
+from net import *
+from genetic import *
 from database import Database
 #initializing flask
 app = Flask(__name__)
@@ -11,7 +9,9 @@ app.debug = True
 
 #these are the running parameters which are sent as a response
 running_params = { "generation":0, "gravity":0, "population":0,
-                    "gap": 0, "distance": 0, "neural_networks":[] }
+                    "gap": 0, "distance": 0, "bird_ids":[]}
+
+neural_networks = []
 
 #handling get requests at '/' it is called when the page is (re)loaded
 @app.route('/', methods=['GET'])
@@ -42,12 +42,10 @@ def StartRequest():
     neural_networks = []
     bird_ids = []
     for _ in range(running_params['population']):
-        # TODO: create parameters to create cycle
         cycle_id = database.insert_cycle('')
-        # TODO: create randomless neural_network
-        neural_network = (''.join(random.choice(string.ascii_letters) for __ in range(10)),)
+        neural_network = generateNet()
         neural_networks.append(neural_network)
-        bird_id = database.insert_bird(cycle_id, neural_network)
+        bird_id = database.insert_bird(cycle_id, str(neural_network))
         bird_ids.append(bird_id)
 
     return jsonify({"respond":"start"})
@@ -59,7 +57,8 @@ def StartGenRequest():
         geneticAlgorithm(database)
     running_params['generation'] += 1
 
-    running_params['neural_networks'] = json.dumps(database.select_bird(running_params['population']))
+    running_params['bird_ids'] = json.dumps(database.select_bird(running_params['population']))
+    print(running_params['bird_ids'])
     return jsonify(running_params)
 
 #handling post requests at '/finishgen'. it is called after every generation
@@ -72,6 +71,12 @@ def FinishGenRequest():
         #fitness_scores.append(_)
         database.insert_fitness(bird_id, fitness_score)
     return jsonify({"respond":"finishgen"})
+
+#handling post requests at '/jumpbird'. it is called after bird update
+@app.route('/jumpbird', methods=['POST'])
+def JumpBirdRequest():
+    #out = neural_network(autograd.Variable(torch.tensor([1.2, 3.1, 4.1])))
+    return jsonify()
 
 #main function
 if __name__ == "__main__":

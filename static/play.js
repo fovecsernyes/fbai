@@ -43,27 +43,25 @@ var LoadImages = function () {
     return self;
 }
 
-var Bird = function (db_id, db_neural_network) {
+var Bird = function (db_id) {
     var self = {
         bX: 10,
         bY: 150,
         id: db_id,
-        neural_network: db_neural_network,
         fitness: 0,
         alive: true
     }
 
-    self.update = function (gravity) {
+    self.update = function (gravity, isJumping) {
         self.fitness++;
         self.bY += gravity;
-        self.moveUp();
+        if(isJumping){
+            self.moveUp();
+        }
     }
     // TODO neural network evolution goes here
     self.moveUp = function () {
-        //do something with self.neural_network
-        if (Math.floor(18 * Math.random()) % 18 === 0) {
-            self.bY -= 25;
-        }
+        self.bY -= 25;
     }
 
     self.kill = function () {
@@ -93,10 +91,9 @@ var Game = function (response) {
     var population = response["population"];
     var gap = response["gap"];
     var distance = 288 - response["distance"];
-    var neural_networks = JSON.parse(response["neural_networks"]);
-
-    var bird_begin = parseInt(neural_networks[0][0]);
-    var bird_end = parseInt(neural_networks[population-1][0]);
+    var birds_ids = JSON.parse(response["bird_ids"]);
+    var bird_begin = parseInt(birds_ids[0]);
+    var bird_end = parseInt(birds_ids[population-1]);
 
     var img = LoadImages();
 
@@ -106,7 +103,7 @@ var Game = function (response) {
 
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
-        bird[i] = Bird(i,neural_networks[i-bird_begin][1]);
+        bird[i] = Bird(i);
     }
 
     self.update = function () {
@@ -136,22 +133,34 @@ var Game = function (response) {
         ctx.textAlign = "left";
         ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
+        birdPosition = []
+        for (var i = bird_begin; i <= bird_end; i++) {
+            if (bird[i].alive) {
+                birdPosition[i] = parseInt(bird[i].bY) + '#' + pipe[0].pX + '#' + (pipe[0].pY + constant)
+            }
+        }
+
+        console.log(birdPosition)
+
+
         for (var i = bird_begin; i <= bird_end; i++) {
             if (bird[i].alive) {
                 ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
-                bird[i].update(gravity);
+                bird[i].update(gravity, 0);
                 for (var j = 0; j < pipe.length; j++) {
                     if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
-                        bird[i].kill();
+                        //bird[i].kill();
                         if (fitness_scores[i] == null){
                             fitness_scores[i] = bird[i].fitness;
                         }else{
                             fitness_scores[i] += bird[i].fitness;
                         }
-                        alive--;
+                        //alive--;
                     }
                 }
             }
+
+
             var c = i - bird_begin + 1;
             if (c < 10 ){
                 c = "0" + c;
