@@ -55,7 +55,7 @@ var Bird = function (db_id) {
     self.update = function (gravity, isJumping) {
         self.fitness++;
         self.bY += gravity;
-        if(isJumping){
+        if(Math.floor(18 * Math.random()) % 18 === 0){
             self.moveUp();
         }
     }
@@ -107,83 +107,99 @@ var Game = function (response) {
     }
 
     self.update = function () {
-        ctx.drawImage(img.bg, 0, 0);
-        for (var i = 0; i < pipe.length; i++) {
-            if (pipe[i].pX < 0 - img.pipeNorth.width) {
-                pipe.shift();
+        if (alive > 0) {
+            ctx.drawImage(img.bg, 0, 0);
+            for (var i = 0; i < pipe.length; i++) {
+                if (pipe[i].pX < 0 - img.pipeNorth.width) {
+                    pipe.shift();
+                }
+                
+                constant = img.pipeNorth.height + gap;
+                ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
+                ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
+                
+                ctx.drawImage(img.welcome, canvas.width/2, 0);
+                
+                pipe[i].update();
+
+                if (pipe[i].pX == distance) {
+                    pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
+                }
+
             }
-            
-            constant = img.pipeNorth.height + gap;
-            ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
-            ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
-            
-            ctx.drawImage(img.welcome, canvas.width/2, 0);
-            
-            pipe[i].update();
+            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
-            if (pipe[i].pX == distance) {
-                pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
-            }
-
-        }
-        ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
-
-        ctx.fillStyle="blue";
-        ctx.font="12px Monospace";
-        ctx.textAlign = "left";
-        ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
-
-        birdPosition = []
-        for (var i = bird_begin; i <= bird_end; i++) {
-            if (bird[i].alive) {
-                birdPosition[i] = parseInt(bird[i].bY) + '#' + pipe[0].pX + '#' + (pipe[0].pY + constant)
-            }
-        }
-
-        console.log(birdPosition)
+            ctx.fillStyle="blue";
+            ctx.font="12px Monospace";
+            ctx.textAlign = "left";
+            ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
 
-        for (var i = bird_begin; i <= bird_end; i++) {
-            if (bird[i].alive) {
-                ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
-                bird[i].update(gravity, 0);
-                for (var j = 0; j < pipe.length; j++) {
-                    if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
-                        //bird[i].kill();
-                        if (fitness_scores[i] == null){
-                            fitness_scores[i] = bird[i].fitness;
-                        }else{
-                            fitness_scores[i] += bird[i].fitness;
-                        }
-                        //alive--;
-                    }
+            request = [];
+            for (var i = bird_begin; i <= bird_end; i++) {
+                if (bird[i].alive) {
+                    request.push(i + '#' + parseInt(bird[i].bY) + ',' + pipe[0].pX + ',' + (pipe[0].pY + constant));
+                }else{
+                    request.push(i + '#' + 'dead');
                 }
             }
 
+            for (var i = bird_begin; i <= bird_end; i++) {
+                if (bird[i].alive) {
+                    ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
+                    bird[i].update(gravity, 0);
+                    for (var j = 0; j < pipe.length; j++) {
+                        if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
+                            bird[i].kill();
+                            if (fitness_scores[i] == null){
+                                fitness_scores[i] = bird[i].fitness;
+                            }else{
+                                fitness_scores[i] += bird[i].fitness;
+                            }
+                            alive--;
+                        }
+                    }
+                }
 
-            var c = i - bird_begin + 1;
-            if (c < 10 ){
-                c = "0" + c;
+
+                var c = i - bird_begin + 1;
+                if (c < 10 ){
+                    c = "0" + c;
+                }
+                ctx.font="12px Monospace";
+                ctx.textAlign = "left";
+                if(bird[i].alive){
+                    ctx.fillStyle="black";
+                }else{
+                    ctx.fillStyle= "red";
+                }
+                ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 10 + c*10);
+                ctx.beginPath();
+                ctx.moveTo(cvs.width/2,0);
+                ctx.lineTo(cvs.width/2,cvs.height);
+                ctx.stroke();
             }
-            ctx.font="12px Monospace";
-            ctx.textAlign = "left";
-            if(bird[i].alive){
-                ctx.fillStyle="black";
-            }else{
-                ctx.fillStyle= "red";
-            }
-            ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 10 + c*10);
-            ctx.beginPath();
-            ctx.moveTo(cvs.width/2,0);
-            ctx.lineTo(cvs.width/2,cvs.height);
-            ctx.stroke();
-        }
-        if (alive > 0) {
-            requestAnimationFrame(update);
+
+            $.ajax({
+                    type: "POST",
+                    url: "/jumpbird",
+                    contentType: "application/json",
+                    // TODO: it should contain the database id of the bird (Bird.id)
+                    data: JSON.stringify( request ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        requestAnimationFrame(update);
+                    },
+                    error: function(err) {
+                        console.log(err || 'Error!');
+                    }
+                });
+
         }else{
-            response = [];
+            request = [];
             for (var i = bird_begin; i <= bird_end; i++){
-                response.push(i + "#" + bird[i].fitness);
+                request.push(i + "#" + bird[i].fitness);
             }
             
             $.ajax({
@@ -191,7 +207,7 @@ var Game = function (response) {
                     url: "/finishgen",
                     contentType: "application/json",
                     // TODO: it should contain the database id of the bird (Bird.id)
-                    data: JSON.stringify( response ),
+                    data: JSON.stringify( request ),
                     dataType: "json",
                     async: false,
                     success: function(response) {

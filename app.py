@@ -22,6 +22,9 @@ def GetRequest():
 #handling post requests at '/'. it is called when 'Apply' button is pressed
 @app.route('/', methods=['POST'])
 def ApplyRequest():
+    running_params['bird_ids'] = []
+    neural_networks = []
+
     database_status = database.create_tables()
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
@@ -39,14 +42,12 @@ def ApplyRequest():
 #handling post requests at '/'. it is called when 'Start' button is pressed
 @app.route('/start', methods=['POST'])
 def StartRequest():
-    neural_networks = []
-    bird_ids = []
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
         neural_network = generateNet()
         neural_networks.append(neural_network)
         bird_id = database.insert_bird(cycle_id, str(neural_network))
-        bird_ids.append(bird_id)
+        running_params['bird_ids'].append(bird_id)
 
     return jsonify({"respond":"start"})
 
@@ -75,8 +76,20 @@ def FinishGenRequest():
 #handling post requests at '/jumpbird'. it is called after bird update
 @app.route('/jumpbird', methods=['POST'])
 def JumpBirdRequest():
-    #out = neural_network(autograd.Variable(torch.tensor([1.2, 3.1, 4.1])))
-    return jsonify()
+    for i in request.json:
+
+        ids = json.loads(running_params['bird_ids'])
+        first_id = ids[0][0]
+        
+        bird_id, params = i.split('#')
+        if params != 'dead':
+            bY,pX,pY = params.split(',')
+            input = autograd.Variable(torch.tensor([float(bY), float(pX), float(pY)]))
+            index = (int(bird_id) - int(first_id))
+            out = neural_networks[index](input)
+            print(out)
+    
+    return jsonify({"respond":"jumpbird"})
 
 #main function
 if __name__ == "__main__":
