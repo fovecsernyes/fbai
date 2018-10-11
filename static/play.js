@@ -52,10 +52,10 @@ var Bird = function (db_id) {
         alive: true
     }
 
-    self.update = function (gravity, isJumping) {
+    self.update = function (gravity, command) {
         self.fitness++;
         self.bY += gravity;
-        if(Math.floor(18 * Math.random()) % 18 === 0){
+        if(command){
             self.moveUp();
         }
     }
@@ -94,6 +94,7 @@ var Game = function (response) {
     var birds_ids = JSON.parse(response["bird_ids"]);
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
+    var command = new Array(population).join(0).split('');
 
     var img = LoadImages();
 
@@ -147,7 +148,7 @@ var Game = function (response) {
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
                     ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
-                    bird[i].update(gravity, 0);
+                    bird[i].update(gravity, command[i-bird_begin]);
                     for (var j = 0; j < pipe.length; j++) {
                         if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                             bird[i].kill();
@@ -189,6 +190,9 @@ var Game = function (response) {
                     dataType: "json",
                     async: false,
                     success: function(response) {
+                        for(var i = 0; i < response.length; i++){
+                            command[i] = parseInt( response[i] );
+                        }
                         requestAnimationFrame(update);
                     },
                     error: function(err) {

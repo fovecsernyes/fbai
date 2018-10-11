@@ -11,10 +11,10 @@ class Net(nn.Module):
         super().__init__()
         self.h1 = nn.Linear(input_size, hidden_size)
         self.h2 = nn.Linear(hidden_size, num_classes)
-        print('Net init')
 
     def forward(self, x):
         x = self.h1(x)
-        x = F.tanh(x)
+        x = F.sigmoid(x)
         x = self.h2(x)
         return x
+

@@ -46,7 +46,12 @@ def StartRequest():
         cycle_id = database.insert_cycle('')
         neural_network = generateNet()
         neural_networks.append(neural_network)
-        bird_id = database.insert_bird(cycle_id, str(neural_network))
+
+        network_data = []
+        for param in neural_network.parameters():
+            network_data.append( param.data )
+
+        bird_id = database.insert_bird(cycle_id, str(network_data))
         running_params['bird_ids'].append(bird_id)
 
     return jsonify({"respond":"start"})
@@ -76,20 +81,21 @@ def FinishGenRequest():
 #handling post requests at '/jumpbird'. it is called after bird update
 @app.route('/jumpbird', methods=['POST'])
 def JumpBirdRequest():
-    for i in request.json:
 
+    respond = []
+
+    for i in request.json:
         ids = json.loads(running_params['bird_ids'])
         first_id = ids[0][0]
-        
         bird_id, params = i.split('#')
         if params != 'dead':
             bY,pX,pY = params.split(',')
             input = autograd.Variable(torch.tensor([float(bY), float(pX), float(pY)]))
             index = (int(bird_id) - int(first_id))
             out = neural_networks[index](input)
-            print(out)
-    
-    return jsonify({"respond":"jumpbird"})
+            respond.append ( 1 if float(out) > 0 else 0 ) 
+
+    return jsonify( respond )
 
 #main function
 if __name__ == "__main__":
