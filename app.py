@@ -1,5 +1,7 @@
 from flask import *
 import json
+from collections import OrderedDict
+import _pickle as pickle
 from net import *
 from genetic import *
 from database import Database
@@ -46,14 +48,10 @@ def StartRequest():
         cycle_id = database.insert_cycle('')
         neural_network = generateNet()
         neural_networks.append(neural_network)
-
-        network_data = []
-        for param in neural_network.parameters():
-            network_data.append( param.data )
-
-        bird_id = database.insert_bird(cycle_id, str(network_data))
+        neural_network = pickle.dumps( neural_network.state_dict() )
+        bird_id = database.insert_bird( cycle_id, neural_network )
         running_params['bird_ids'].append(bird_id)
-
+    print (neural_networks[3].state_dict() )
     return jsonify({"respond":"start"})
 
 #handling post requests at '/startgen'. it is called before every generation
@@ -61,20 +59,25 @@ def StartRequest():
 def StartGenRequest():
     if running_params['generation']:
         geneticAlgorithm(database)
-    running_params['generation'] += 1
 
-    running_params['bird_ids'] = json.dumps(database.select_bird(running_params['population']))
-    print(running_params['bird_ids'])
+    running_params['generation'] += 1
+    birds_data = database.select_bird(running_params['population'])
+
+    running_params['bird_ids'] = json.dumps( [str(i[0]) for i in birds_data] )
+
+    j = 0
+    for i in birds_data:
+        neural_networks[j].load_state_dict( pickle.loads(i[1]) )
+        j+=1
+
     return jsonify(running_params)
 
 #handling post requests at '/finishgen'. it is called after every generation
 @app.route('/finishgen', methods=['POST'])
 def FinishGenRequest():
-    #fitness_scores = []
     for i in request.json:
         bird_id, fitness_score = i.split('#')
         print(bird_id, fitness_score)
-        #fitness_scores.append(_)
         database.insert_fitness(bird_id, fitness_score)
     return jsonify({"respond":"finishgen"})
 
@@ -86,7 +89,7 @@ def JumpBirdRequest():
 
     for i in request.json:
         ids = json.loads(running_params['bird_ids'])
-        first_id = ids[0][0]
+        first_id = ids[0]
         bird_id, params = i.split('#')
         if params != 'dead':
             bY,pX,pY = params.split(',')

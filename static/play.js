@@ -92,6 +92,9 @@ var Game = function (response) {
     var gap = response["gap"];
     var distance = 288 - response["distance"];
     var birds_ids = JSON.parse(response["bird_ids"]);
+
+    console.log(birds_ids);
+
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
@@ -99,7 +102,7 @@ var Game = function (response) {
     var img = LoadImages();
 
     var pipe = [];
-    pipe[0] = Pipe(0);
+    pipe[0] = Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
     alive = population;
 
     var bird = [];
@@ -185,7 +188,6 @@ var Game = function (response) {
                     type: "POST",
                     url: "/jumpbird",
                     contentType: "application/json",
-                    // TODO: it should contain the database id of the bird (Bird.id)
                     data: JSON.stringify( request ),
                     dataType: "json",
                     async: false,
@@ -216,7 +218,7 @@ var Game = function (response) {
                     async: false,
                     success: function(response) {
                         console.log(response);
-                        //start_gen();
+                        start_gen();
                     },
                     error: function(err) {
                         console.log(err || 'Error!');
