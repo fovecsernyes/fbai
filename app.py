@@ -1,10 +1,12 @@
+#this file handles the backend
+
 from flask import *
-import json
-from collections import OrderedDict
+import json 
 import _pickle as pickle
 from net import *
 from genetic import *
 from database import Database
+
 #initializing flask
 app = Flask(__name__)
 app.debug = True
@@ -13,6 +15,7 @@ app.debug = True
 running_params = { "generation":0, "gravity":0, "population":0,
                     "gap": 0, "distance": 0, "bird_ids":[]}
 
+#neural network is a global list type variable
 neural_networks = []
 
 #handling get requests at '/' it is called when the page is (re)loaded
@@ -24,10 +27,13 @@ def GetRequest():
 #handling post requests at '/'. it is called when 'Apply' button is pressed
 @app.route('/', methods=['POST'])
 def ApplyRequest():
+    #bird ids and neural networks must be empty
     running_params['bird_ids'] = []
     neural_networks = []
 
+    #creating tables if not exist
     database_status = database.create_tables()
+    #setting and returning the running parameters from the post request
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
     running_params['population'] = int(request.form['population'])
@@ -41,9 +47,10 @@ def ApplyRequest():
                                         distance=running_params['distance'],
                                         database_status=database_status)
 
-#handling post requests at '/'. it is called when 'Start' button is pressed
+#handling post requests at '/start'. it is called when 'Start' button is pressed
 @app.route('/start', methods=['POST'])
 def StartRequest():
+    #generating and writing bird ids and neural networks to database
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
         neural_network = generateNet()
@@ -51,53 +58,53 @@ def StartRequest():
         neural_network = pickle.dumps( neural_network.state_dict() )
         bird_id = database.insert_bird( cycle_id, neural_network )
         running_params['bird_ids'].append(bird_id)
-    print (neural_networks[3].state_dict() )
     return jsonify({"respond":"start"})
 
 #handling post requests at '/startgen'. it is called before every generation
 @app.route('/startgen', methods=['POST'])
 def StartGenRequest():
+    #after the first gen, the genetic algorithm runs
     if running_params['generation']:
         geneticAlgorithm(database)
-
+    #generation number is must be increased
     running_params['generation'] += 1
+    #bird ids and neural networks are read from the database here
     birds_data = database.select_bird(running_params['population'])
-
     running_params['bird_ids'] = json.dumps( [str(i[0]) for i in birds_data] )
-
     j = 0
     for i in birds_data:
         neural_networks[j].load_state_dict( pickle.loads(i[1]) )
         j+=1
-
     return jsonify(running_params)
 
 #handling post requests at '/finishgen'. it is called after every generation
 @app.route('/finishgen', methods=['POST'])
 def FinishGenRequest():
+    #after every generation the fitness score is written to the database
     for i in request.json:
         bird_id, fitness_score = i.split('#')
         print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
     return jsonify({"respond":"finishgen"})
 
-#handling post requests at '/jumpbird'. it is called after bird update
+#handling post requests at '/jumpbird'. it is called after every bird update
 @app.route('/jumpbird', methods=['POST'])
 def JumpBirdRequest():
-
+    #respont contains the jumping commands. 0 means not to, 1 means to jump
     respond = []
-
     for i in request.json:
+        #birds datas from post request, like id, bY, pX, pY
         ids = json.loads(running_params['bird_ids'])
+        #fist bird id
         first_id = ids[0]
         bird_id, params = i.split('#')
+        #running the neural network
         if params != 'dead':
             bY,pX,pY = params.split(',')
             input = autograd.Variable(torch.tensor([float(bY), float(pX), float(pY)]))
             index = (int(bird_id) - int(first_id))
             out = neural_networks[index](input)
             respond.append ( 1 if float(out) > 0 else 0 ) 
-
     return jsonify( respond )
 
 #main function

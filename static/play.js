@@ -1,3 +1,6 @@
+//this is the frontend script file
+
+//dropdown menu
 var dropdown = function(begin, end, add){
     var options = "";
     for(var i=begin; i<=end; i=i+add){
@@ -6,6 +9,7 @@ var dropdown = function(begin, end, add){
     return options;
 }
 
+//function for /startgen post request, this starts the a new generation
 var start_gen = function(){
         $.ajax({
             type: "POST",
@@ -24,6 +28,7 @@ var start_gen = function(){
         });
 }
 
+//function for loading images
 var LoadImages = function () {
     bg = new Image();
     fg = new Image();
@@ -43,6 +48,7 @@ var LoadImages = function () {
     return self;
 }
 
+//class for Birds
 var Bird = function (db_id) {
     var self = {
         bX: 10,
@@ -51,7 +57,7 @@ var Bird = function (db_id) {
         fitness: 0,
         alive: true
     }
-
+    //update function, the command can be 0 or 1, depends on the neural network
     self.update = function (gravity, command) {
         self.fitness++;
         self.bY += gravity;
@@ -59,11 +65,11 @@ var Bird = function (db_id) {
             self.moveUp();
         }
     }
-    // TODO neural network evolution goes here
+    //funtion for moving up
     self.moveUp = function () {
         self.bY -= 25;
     }
-
+    //function for killing a bird
     self.kill = function () {
         self.alive = false;
     }
@@ -71,22 +77,23 @@ var Bird = function (db_id) {
     return self;
 }
 
+//class for Pipes
 var Pipe = function (y) {
     var self =
     {
         pX: cvs.width/2,
         pY: y
     }
-
+    //update the pipes 
     self.update = function () {
         self.pX--;
     }
     return self;
 }
-
+//Game class which handles almost everything
 var Game = function (response) {
+    //variables mainly from backend response
     var fitness_scores = [];
-
     var gravity = response["gravity"]/5;
     var population = response["population"];
     var gap = response["gap"];
@@ -98,47 +105,50 @@ var Game = function (response) {
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
-
+    //loading the images
     var img = LoadImages();
-
+    //creating the first pipe
     var pipe = [];
     pipe[0] = Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
     alive = population;
-
+    //creating the birds
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
         bird[i] = Bird(i);
     }
-
+    //this function is called in every moment
     self.update = function () {
+        //if there is any bird alive run, else /finishgen request is sent
         if (alive > 0) {
-            ctx.drawImage(img.bg, 0, 0);
+            ctx.drawImage(img.bg, 0, 0); //background drawing
+            //shifting the pipes if neccessary
             for (var i = 0; i < pipe.length; i++) {
                 if (pipe[i].pX < 0 - img.pipeNorth.width) {
                     pipe.shift();
                 }
                 
                 constant = img.pipeNorth.height + gap;
-                ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
-                ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
+                ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY); //North pipe drawing
+                ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);//South pipe drawing
                 
                 ctx.drawImage(img.welcome, canvas.width/2, 0);
                 
-                pipe[i].update();
+                pipe[i].update(); //updating the pipes
 
-                if (pipe[i].pX == distance) {
+                if (pipe[i].pX == distance) { //new pipe
                     pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
                 }
 
             }
-            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
+            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height); //foreground drawing
 
+            //generation text
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
             ctx.textAlign = "left";
             ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
-
+            //request[] is for /jumbird request which contains data for neural network input
             request = [];
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
@@ -147,7 +157,7 @@ var Game = function (response) {
                     request.push(i + '#' + 'dead');
                 }
             }
-
+            //drawing the birds and killing the if neccessary
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
                     ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
@@ -165,7 +175,7 @@ var Game = function (response) {
                     }
                 }
 
-
+                //drawing the birds fitness scores
                 var c = i - bird_begin + 1;
                 if (c < 10 ){
                     c = "0" + c;
@@ -183,7 +193,7 @@ var Game = function (response) {
                 ctx.lineTo(cvs.width/2,cvs.height);
                 ctx.stroke();
             }
-
+            //post request for /jumpird and start update function again
             $.ajax({
                     type: "POST",
                     url: "/jumpbird",
@@ -202,7 +212,7 @@ var Game = function (response) {
                     }
                 });
 
-        }else{
+        }else{//after every generation sending the /finishgen request with the fitness scores
             request = [];
             for (var i = bird_begin; i <= bird_end; i++){
                 request.push(i + "#" + bird[i].fitness);
@@ -229,6 +239,7 @@ var Game = function (response) {
     return self;
 }
 
+//main function for the game
 var rungame =function(response){
     var game = Game(response);
     game.update();

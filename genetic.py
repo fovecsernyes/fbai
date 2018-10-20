@@ -1,3 +1,5 @@
+#this file manages the Genetic algorithm
+
 from database import Database
 
 #genetic algorithm

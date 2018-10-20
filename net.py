@@ -1,11 +1,14 @@
+#this file contains the neural network
+
 import torch
 from torch import autograd, nn
 import torch.nn.functional as F
 
+#generating random neural networks
 def generateNet():
 	return Net(input_size=3, hidden_size=4, num_classes=1)
 
-
+#class for neural network
 class Net(nn.Module):
     def __init__(self, input_size, hidden_size, num_classes):
         super().__init__()

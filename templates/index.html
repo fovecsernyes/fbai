@@ -6,7 +6,7 @@
     <script type=text/javascript src="{{url_for('static', filename='jquery.min.js') }}"></script>
     <script type=text/javascript src="{{url_for('static', filename='play.js') }}"></script>
 </head>
-
+<!-- dropdown menu -->
 <body onload="onLoadFunction();">
     <form action="/" method = "POST">
         Gravity:
@@ -29,15 +29,15 @@
     <script>
         var cvs = document.getElementById("canvas");
         var ctx = cvs.getContext("2d");
-
+        // welcome page on canvas
         function onLoadFunction(){
             document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
             document.getElementById("dis_dd").innerHTML = dropdown(120,260,20);
     
-            $('#gra_dd').val("4");
-            $('#pop_dd').val("25");
+            $('#gra_dd').val("5");
+            $('#pop_dd').val("50");
             $('#gap_dd').val("120");
             $('#dis_dd').val("160");
     
@@ -79,7 +79,7 @@
             }, false);
             bg.src = "../static/images/welcome.png";
     
-    
+            //clicking the start button
             document.getElementById("start").addEventListener("click", function(){
 
                 document.getElementById("start").disabled = true;

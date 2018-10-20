@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#this file loads the database configuration
+
 from configparser import ConfigParser
  
 def config(filename='database.ini', section='postgresql'):

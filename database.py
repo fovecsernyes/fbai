@@ -1,24 +1,29 @@
+#this file contains the database methods
+
 import psycopg2
 from config import config
 
+#database methods are handled in a class
 class Database(object):
+
+    #constructor connects to the postgres database
     def __init__(self):
         self.conn = None
         try:
             # read connection parameters
             self.params = config()
-    
             # connect to the PostgreSQL server
             print('Connecting to the PostgreSQL database...')
             self.conn = psycopg2.connect(**self.params)
-
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
+    #destructor disconnects from the database
     def __del__(self):
         self.conn.close()
         print('Database connection closed.')
 
+    #this method creates the tables if not exist
     def create_tables(self):
 
         commands = (
@@ -110,6 +115,7 @@ class Database(object):
         print("Database intialized")
         return "OK"
 
+    #this method inserts into cycle table and returns cycle id
     def insert_cycle(self, parameters):
         sqlInsert = """INSERT INTO public.cycle(parameters)
                         VALUES(%s) RETURNING id;"""
@@ -139,6 +145,7 @@ class Database(object):
             cycle_id = -1
         return cycle_id
 
+    #this method inserts into bird table and returns bird_id
     def insert_bird(self, cycle_id, neural_network):
         sqlInsert = """INSERT INTO public.bird(cycle_id)
                    VALUES(%s) RETURNING id;"""
@@ -168,6 +175,7 @@ class Database(object):
             bird_id = -1
         return bird_id
 
+    #this method inserts into fitness table
     def insert_fitness(self, bird_id, fitness_score):
         sqlInsert = """INSERT INTO public.fitness(cycle_id, bird_id)
                         VALUES((SELECT MAX(id) FROM public.cycle), %s) RETURNING id;"""
@@ -198,6 +206,7 @@ class Database(object):
             fitness_id = -1
         return fitness_id
 
+    #this method selects from bird table and returns bird_id and neural network in binary format
     def select_bird(self, population):
         sqlSelect = """SELECT id, neural_network FROM
                     (SELECT * FROM bird ORDER BY id DESC LIMIT %s) AS selectbird
