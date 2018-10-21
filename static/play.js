@@ -58,20 +58,16 @@ var Bird = function (db_id) {
         alive: true
     }
     //update function, the command can be 0 or 1, depends on the neural network
-    self.update = function (gravity, command) {
+    self.update = function (gravity, command, jump) {
         self.fitness++;
         self.bY += gravity;
         if(command){
-            self.moveUp();
+            self.moveUp(jump);
         }
     }
     //funtion for moving up
-    self.moveUp = function () {
-        self.bY -= 25;
-    }
-    //function for killing a bird
-    self.kill = function () {
-        self.alive = false;
+    self.moveUp = function (jump) {
+        self.bY -= jump;
     }
 
     return self;
@@ -97,11 +93,9 @@ var Game = function (response) {
     var gravity = response["gravity"]/5;
     var population = response["population"];
     var gap = response["gap"];
+    var jump = response["jump"];
     var distance = 288 - response["distance"];
     var birds_ids = JSON.parse(response["bird_ids"]);
-
-    console.log(birds_ids);
-
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
@@ -119,7 +113,9 @@ var Game = function (response) {
     //this function is called in every moment
     self.update = function () {
         //if there is any bird alive run, else /finishgen request is sent
+        //console.log(alive);
         if (alive > 0) {
+            alive = 0;
             ctx.drawImage(img.bg, 0, 0); //background drawing
             //shifting the pipes if neccessary
             for (var i = 0; i < pipe.length; i++) {
@@ -160,21 +156,22 @@ var Game = function (response) {
             //drawing the birds and killing the if neccessary
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
+                    bird[i].update(gravity, command[i-bird_begin], jump);
                     ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
-                    bird[i].update(gravity, command[i-bird_begin]);
                     for (var j = 0; j < pipe.length; j++) {
                         if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
-                            bird[i].kill();
+                            bird[i].alive = false;
                             if (fitness_scores[i] == null){
                                 fitness_scores[i] = bird[i].fitness;
                             }else{
                                 fitness_scores[i] += bird[i].fitness;
                             }
-                            alive--;
                         }
                     }
                 }
-
+                if(bird[i].alive){
+                    alive++;
+                }
                 //drawing the birds fitness scores
                 var c = i - bird_begin + 1;
                 if (c < 10 ){
@@ -193,6 +190,7 @@ var Game = function (response) {
                 ctx.lineTo(cvs.width/2,cvs.height);
                 ctx.stroke();
             }
+
             //post request for /jumpird and start update function again
             $.ajax({
                     type: "POST",
@@ -227,7 +225,7 @@ var Game = function (response) {
                     async: false,
                     success: function(response) {
                         console.log(response);
-                        start_gen();
+                        //start_gen();
                     },
                     error: function(err) {
                         console.log(err || 'Error!');

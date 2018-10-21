@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.debug = True
 
 #these are the running parameters which are sent as a response
-running_params = { "generation":0, "gravity":0, "population":0,
+running_params = { "generation":0, "gravity":0, "jump":0, "population":0,
                     "gap": 0, "distance": 0, "bird_ids":[]}
 
 #neural network is a global list type variable
@@ -36,12 +36,14 @@ def ApplyRequest():
     #setting and returning the running parameters from the post request
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
+    running_params['jump'] = int(request.form['jump'])
     running_params['population'] = int(request.form['population'])
     running_params['gap'] = int(request.form['gap'])
     running_params['distance'] = int(request.form['distance'])
     print("Parameters: " + str(running_params))
     return render_template('index.html', generation=running_params['generation'],
                                         gravity=running_params['gravity'],
+                                        jump=running_params['jump'],
                                         population=running_params['population'],
                                         gap=running_params['gap'],
                                         distance=running_params['distance'],

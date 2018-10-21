@@ -11,6 +11,8 @@
     <form action="/" method = "POST">
         Gravity:
         <select name=gravity id="gra_dd"></select>
+        Jump:
+        <select name=jump id="jum_dd"></select>
         Population:
         <select name=population id="pop_dd"></select>
         Gap:
@@ -32,11 +34,13 @@
         // welcome page on canvas
         function onLoadFunction(){
             document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
+            document.getElementById("jum_dd").innerHTML = dropdown(10,30,5);
             document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
             document.getElementById("dis_dd").innerHTML = dropdown(120,260,20);
     
             $('#gra_dd').val("5");
+            $('#jum_dd').val("10");
             $('#pop_dd').val("50");
             $('#gap_dd').val("120");
             $('#dis_dd').val("160");
@@ -64,6 +68,7 @@
                 document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
                     $('#gra_dd').val("{{gravity}}")
+                    $('#pop_dd').val("{{jump}}")
                     $('#pop_dd').val("{{population}}")
                     $('#gap_dd').val("{{gap}}")
                     $('#dis_dd').val("{{distance}}")
@@ -71,6 +76,7 @@
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;
                     document.getElementById("gra_dd").disabled = true;
+                    document.getElementById("jum_dd").disabled = true;
                     document.getElementById("pop_dd").disabled = true;
                     document.getElementById("gap_dd").disabled = true;
                     document.getElementById("dis_dd").disabled = true;
