@@ -9,15 +9,11 @@
 <!-- dropdown menu -->
 <body onload="onLoadFunction();">
     <form action="/" method = "POST">
-        Gravity:
+        <button type="button" id="label" onmousedown="show_label()" onmouseup="hide_label()">></button>
         <select name=gravity id="gra_dd"></select>
-        Jump:
         <select name=jump id="jum_dd"></select>
-        Population:
         <select name=population id="pop_dd"></select>
-        Gap:
         <select name=gap id="gap_dd"></select>
-        Distance:
         <select name=distance id="dis_dd"></select>
         
         <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
@@ -33,11 +29,11 @@
         var ctx = cvs.getContext("2d");
         // welcome page on canvas
         function onLoadFunction(){
-            document.getElementById("gra_dd").innerHTML = dropdown(1,10,1);
-            document.getElementById("jum_dd").innerHTML = dropdown(10,30,5);
-            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5);
-            document.getElementById("gap_dd").innerHTML = dropdown(70,120,5);
-            document.getElementById("dis_dd").innerHTML = dropdown(120,260,20);
+            document.getElementById("gra_dd").innerHTML = dropdown(1,10,1, "Gravity");
+            document.getElementById("jum_dd").innerHTML = dropdown(10,30,5, "Jump");
+            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5, "Population");
+            document.getElementById("gap_dd").innerHTML = dropdown(70,120,5, "Gap");
+            document.getElementById("dis_dd").innerHTML = dropdown(120,260,20, "Distance");
     
             $('#gra_dd').val("5");
             $('#jum_dd').val("10");

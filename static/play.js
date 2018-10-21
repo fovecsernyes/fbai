@@ -1,8 +1,31 @@
 //this is the frontend script file
 
+labels = [0,0,0,0,0]
+
+var show_label = function(){
+    label[0] =  $('#gra_dd').val();
+    label[1] = $('#jum_dd').val();
+    label[2] = $('#pop_dd').val();
+    label[3] = $('#gap_dd').val();
+    label[4] = $('#dis_dd').val();
+
+    $('#gra_dd').val("Gravity");
+    $('#jum_dd').val("Jump");
+    $('#pop_dd').val("Population");
+    $('#gap_dd').val("Gap");
+    $('#dis_dd').val("Distance");
+}
+
+var hide_label = function(){
+    $('#gra_dd').val(label[0]);
+    $('#jum_dd').val(label[1]);
+    $('#pop_dd').val(label[2]);
+    $('#gap_dd').val(label[3]);
+    $('#dis_dd').val(label[4]);
+}
 //dropdown menu
-var dropdown = function(begin, end, add){
-    var options = "";
+var dropdown = function(begin, end, add, label){
+    options = "<option disabled>" + label + "</option>";
     for(var i=begin; i<=end; i=i+add){
         options += "<option>"+ i +"</option>";
     }
