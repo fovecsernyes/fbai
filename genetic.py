@@ -3,11 +3,17 @@
 from database import Database
 
 #genetic algorithm
-def geneticAlgorithm(database):
+def geneticAlgorithm(database, population):
     print("genetic algorithm called")
-    selection(database)
-    crossover(database)
-    mutation(database)
+
+    #TODO: read the current fitness scores and neural networks from the database
+    #fitness, neural_networks = fitness_and_neural_networks_selection_from_database
+
+    #fitness, neural_networks = selection(fitness, neural_networks)
+    #fitness, neural_networks = crossover(fitness, neural_networks)
+    #fitness, neural_networks = mutation(fitness, neural_networks)
+
+    #TODO: write to database the updated neural networks
     return
 
 #selection part of genetic algorithm

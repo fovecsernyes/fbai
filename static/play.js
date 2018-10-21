@@ -222,7 +222,6 @@ var Game = function (response) {
                     type: "POST",
                     url: "/finishgen",
                     contentType: "application/json",
-                    // TODO: it should contain the database id of the bird (Bird.id)
                     data: JSON.stringify( request ),
                     dataType: "json",
                     async: false,

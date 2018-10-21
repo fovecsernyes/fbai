@@ -63,9 +63,6 @@ def StartRequest():
 #handling post requests at '/startgen'. it is called before every generation
 @app.route('/startgen', methods=['POST'])
 def StartGenRequest():
-    #after the first gen, the genetic algorithm runs
-    if running_params['generation']:
-        geneticAlgorithm(database)
     #generation number is must be increased
     running_params['generation'] += 1
     #bird ids and neural networks are read from the database here
@@ -85,6 +82,10 @@ def FinishGenRequest():
         bird_id, fitness_score = i.split('#')
         print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
+
+    #after every generation the genetic algorithm runs
+    geneticAlgorithm(database, running_params['population'])
+
     return jsonify({"respond":"finishgen"})
 
 #handling post requests at '/jumpbird'. it is called after every bird update
