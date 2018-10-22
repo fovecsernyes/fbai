@@ -18,14 +18,22 @@ running_params = { "generation":0, "gravity":0, "jump":0, "population":0,
 #neural network is a global list type variable
 neural_networks = []
 
-#handling get requests at '/' it is called when the page is (re)loaded
 @app.route('/', methods=['GET'])
+def IndexRequest():
+    return render_template('index.html')
+
+@app.route('/sp/', methods=['GET'])
+def SingleRequest():
+    return render_template('sp.html')
+
+#handling get requests at '/ai' it is called when the page is (re)loaded
+@app.route('/ai/', methods=['GET'])
 def GetRequest():
     database_status=""
-    return render_template('index.html', database_status=database_status)
+    return render_template('ai.html', database_status=database_status)
 
 #handling post requests at '/'. it is called when 'Apply' button is pressed
-@app.route('/', methods=['POST'])
+@app.route('/ai/', methods=['POST'])
 def ApplyRequest():
     #bird ids and neural networks must be empty
     running_params['bird_ids'] = []
@@ -41,7 +49,7 @@ def ApplyRequest():
     running_params['gap'] = int(request.form['gap'])
     running_params['distance'] = int(request.form['distance'])
     print("Parameters: " + str(running_params))
-    return render_template('index.html', generation=running_params['generation'],
+    return render_template('ai.html', generation=running_params['generation'],
                                         gravity=running_params['gravity'],
                                         jump=running_params['jump'],
                                         population=running_params['population'],
@@ -50,7 +58,7 @@ def ApplyRequest():
                                         database_status=database_status)
 
 #handling post requests at '/start'. it is called when 'Start' button is pressed
-@app.route('/start', methods=['POST'])
+@app.route('/ai/start', methods=['POST'])
 def StartRequest():
     #generating and writing bird ids and neural networks to database
     for _ in range(running_params['population']):
@@ -63,7 +71,7 @@ def StartRequest():
     return jsonify({"respond":"start"})
 
 #handling post requests at '/startgen'. it is called before every generation
-@app.route('/startgen', methods=['POST'])
+@app.route('/ai/startgen', methods=['POST'])
 def StartGenRequest():
     #generation number is must be increased
     running_params['generation'] += 1
@@ -77,7 +85,7 @@ def StartGenRequest():
     return jsonify(running_params)
 
 #handling post requests at '/finishgen'. it is called after every generation
-@app.route('/finishgen', methods=['POST'])
+@app.route('/ai/finishgen', methods=['POST'])
 def FinishGenRequest():
     #after every generation the fitness score is written to the database
     for i in request.json:
@@ -91,7 +99,7 @@ def FinishGenRequest():
     return jsonify({"respond":"finishgen"})
 
 #handling post requests at '/jumpbird'. it is called after every bird update
-@app.route('/jumpbird', methods=['POST'])
+@app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump
     respond = []

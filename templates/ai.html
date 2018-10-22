@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird AI player</title>
+    <script type=text/javascript src="{{url_for('static', filename='jquery.min.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='aiplayer.js') }}"></script>
+</head>
+<!-- dropdown menu -->
+<body onload="onLoadFunction();">
+    <form action="/ai/" method = "POST">
+        <input type="button" onclick="location.href='/';" value="<" />
+        <button type="button" id="label" onmousedown="show_label()" onmouseup="hide_label()">?</button>
+        <select name=gravity id="gra_dd"></select>
+        <select name=jump id="jum_dd"></select>
+        <select name=population id="pop_dd"></select>
+        <select name=gap id="gap_dd"></select>
+        <select name=distance id="dis_dd"></select>
+        
+        <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
+        <input id="start" type="button" value="Start" />
+        <input type="button" value="Reload" onClick="window.location.href=window.location.href">
+        
+    </form>
+
+    <canvas id="canvas" width="576" height="512"></canvas>
+
+    <script>
+        var cvs = document.getElementById("canvas");
+        var ctx = cvs.getContext("2d");
+        // welcome page on canvas
+        function onLoadFunction(){
+            document.getElementById("gra_dd").innerHTML = dropdown(1,10,1, "Gravity");
+            document.getElementById("jum_dd").innerHTML = dropdown(10,30,5, "Jump");
+            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5, "Population");
+            document.getElementById("gap_dd").innerHTML = dropdown(70,120,5, "Gap");
+            document.getElementById("dis_dd").innerHTML = dropdown(120,260,20, "Distance");
+    
+            $('#gra_dd').val("5");
+            $('#jum_dd').val("10");
+            $('#pop_dd').val("50");
+            $('#gap_dd').val("120");
+            $('#dis_dd').val("160");
+    
+            var bg = new Image();
+            bg.addEventListener('load', function() {
+                //background
+                ctx.drawImage(bg,0,0);
+                //welcome
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'white';
+                ctx.textAlign = "center";
+                ctx.fillText("AI player mode!", cvs.width/2, 100);
+                //description
+                ctx.font = "15px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
+                ctx.fillText("Set the running parameters below, then click Start!", cvs.width/2, 175);
+                //details
+                ctx.font = "10px Monospace";
+                ctx.fillStyle = "grey";
+                ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
+    
+                document.getElementById("start").disabled = true;
+                if ( "{{database_status}}" == "OK"){
+                    $('#gra_dd').val("{{gravity}}")
+                    $('#pop_dd').val("{{jump}}")
+                    $('#pop_dd').val("{{population}}")
+                    $('#gap_dd').val("{{gap}}")
+                    $('#dis_dd').val("{{distance}}")
+    
+                    document.getElementById("apply").disabled = true;
+                    document.getElementById("start").disabled = false;
+                    document.getElementById("gra_dd").disabled = true;
+                    document.getElementById("jum_dd").disabled = true;
+                    document.getElementById("pop_dd").disabled = true;
+                    document.getElementById("gap_dd").disabled = true;
+                    document.getElementById("dis_dd").disabled = true;
+
+                }
+            }, false);
+            bg.src = "../static/images/welcome.png";
+    
+            //clicking the start button
+            document.getElementById("start").addEventListener("click", function(){
+
+                document.getElementById("start").disabled = true;
+                $.ajax({
+                    type: "POST",
+                    url: "/ai/start",
+                    contentType: "application/json",
+                    data: JSON.stringify( {"request" : "start"} ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        start_gen();
+                    },
+                    error: function(err) {
+                        console.log(err || 'Error!');
+                    }
+                });                
+            });
+            
+        };
+    </script>
+</body>
+</html>

@@ -1,7 +1,5 @@
 //this is the frontend script file
 
-labels = [0,0,0,0,0]
-
 var show_label = function(){
     label[0] =  $('#gra_dd').val();
     label[1] = $('#jum_dd').val();
@@ -36,7 +34,7 @@ var dropdown = function(begin, end, add, label){
 var start_gen = function(){
         $.ajax({
             type: "POST",
-            url: "/startgen",
+            url: "/ai/startgen",
             contentType: "application/json",
             data: JSON.stringify( {"request" : "startgen"} ),
             dataType: "json",
@@ -217,7 +215,7 @@ var Game = function (response) {
             //post request for /jumpird and start update function again
             $.ajax({
                     type: "POST",
-                    url: "/jumpbird",
+                    url: "/ai/jumpbird",
                     contentType: "application/json",
                     data: JSON.stringify( request ),
                     dataType: "json",
@@ -241,14 +239,14 @@ var Game = function (response) {
             
             $.ajax({
                     type: "POST",
-                    url: "/finishgen",
+                    url: "/ai/finishgen",
                     contentType: "application/json",
                     data: JSON.stringify( request ),
                     dataType: "json",
                     async: false,
                     success: function(response) {
                         console.log(response);
-                        //start_gen();
+                        start_gen();
                     },
                     error: function(err) {
                         console.log(err || 'Error!');
