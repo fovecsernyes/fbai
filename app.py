@@ -22,6 +22,7 @@ neural_networks = []
 def IndexRequest():
     return render_template('index.html')
 
+#single player page
 @app.route('/sp/', methods=['GET'])
 def SingleRequest():
     return render_template('sp.html')
@@ -32,7 +33,7 @@ def GetRequest():
     database_status=""
     return render_template('ai.html', database_status=database_status)
 
-#handling post requests at '/'. it is called when 'Apply' button is pressed
+#handling post requests at '/ai/'. it is called when 'Apply' button is pressed
 @app.route('/ai/', methods=['POST'])
 def ApplyRequest():
     #bird ids and neural networks must be empty
@@ -57,7 +58,7 @@ def ApplyRequest():
                                         distance=running_params['distance'],
                                         database_status=database_status)
 
-#handling post requests at '/start'. it is called when 'Start' button is pressed
+#handling post requests at '/ai/start'. it is called when 'Start' button is pressed
 @app.route('/ai/start', methods=['POST'])
 def StartRequest():
     #generating and writing bird ids and neural networks to database
@@ -70,7 +71,7 @@ def StartRequest():
         running_params['bird_ids'].append(bird_id)
     return jsonify({"respond":"start"})
 
-#handling post requests at '/startgen'. it is called before every generation
+#handling post requests at '/ai/startgen'. it is called before every generation
 @app.route('/ai/startgen', methods=['POST'])
 def StartGenRequest():
     #generation number is must be increased
@@ -84,7 +85,7 @@ def StartGenRequest():
         j+=1
     return jsonify(running_params)
 
-#handling post requests at '/finishgen'. it is called after every generation
+#handling post requests at '/ai/finishgen'. it is called after every generation
 @app.route('/ai/finishgen', methods=['POST'])
 def FinishGenRequest():
     #after every generation the fitness score is written to the database
@@ -98,7 +99,7 @@ def FinishGenRequest():
 
     return jsonify({"respond":"finishgen"})
 
-#handling post requests at '/jumpbird'. it is called after every bird update
+#handling post requests at '/ai/jumpbird'. it is called after every bird update
 @app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump

@@ -8,9 +8,16 @@
 </head>
 <!-- dropdown menu -->
 <body onload="onLoadFunction();">
+    <div>
+        <input type="button" onclick="location.href='/';" value="< Home" />
+        <input type="button" onclick="location.href='/sp';" value="Single player mode" />
+        <input type="button" value="Reload" onClick="window.location.href=window.location.href" />
+    </div>
+
+    <canvas id="canvas" width="576" height="512"></canvas>
+    
     <form action="/ai/" method = "POST">
-        <input type="button" onclick="location.href='/';" value="<" />
-        <button type="button" id="label" onmousedown="show_label()" onmouseup="hide_label()">?</button>
+        <button type="button" id="label" onmousedown="show_label()" onmouseup="hide_label()">Show labels</button>
         <select name=gravity id="gra_dd"></select>
         <select name=jump id="jum_dd"></select>
         <select name=population id="pop_dd"></select>
@@ -18,12 +25,10 @@
         <select name=distance id="dis_dd"></select>
         
         <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
-        <input id="start" type="button" value="Start" />
-        <input type="button" value="Reload" onClick="window.location.href=window.location.href">
+        <input id="start" type="button" value="Start game" />
         
     </form>
 
-    <canvas id="canvas" width="576" height="512"></canvas>
 
     <script>
         var cvs = document.getElementById("canvas");

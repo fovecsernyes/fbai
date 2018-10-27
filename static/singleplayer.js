@@ -84,14 +84,22 @@ function draw(){
     ctx.lineTo(cvs.width/2,cvs.height);
     ctx.stroke();
 
+
     ctx.font = "12px Monospace";
     ctx.fillStyle = 'blue';
     ctx.textAlign = "left";
-    ctx.fillText("Score : "+score, cvs.width/2 + 10, 20);
+    ctx.fillText("Score : "+score, cvs.width/2 + 10, 30);
+
+    ctx.font = "14px Monospace";
+    ctx.fillStyle = 'white';
+    ctx.textAlign = "center";
+    ctx.fillText("Single player mode!", cvs.width/4*3 + 10, 90);
+
+    ctx.font = "12px Monospace";
     ctx.fillStyle = 'black';
     ctx.textAlign = "center";
-    ctx.fillText("Press any key to controll the bird.", cvs.width/4*3 + 10, 50);
-    ctx.fillText("The goal is to avoid the pipes.", cvs.width/4*3 + 10, 80);
+    ctx.fillText("Press any key to control the bird.", cvs.width/4*3 + 10, 120);
+    ctx.fillText("Goal is to avoid the pipes.", cvs.width/4*3 + 10, 140);
     ctx.fillStyle = 'grey';
     ctx.font = "10px Monospace";
     ctx.fillText("Created by https://www.codeexplained.org", cvs.width/4*3, cvs.height - 10);
