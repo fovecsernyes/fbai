@@ -1,7 +1,7 @@
-/// @file singleplayer.js
-//  @author http://codeexplained.org
+/// @file aiplayer.js
+//  @author Mark Vecsernyes
 //
-//  @brief Ez a fájl tartalmazza az "SINGLEPLAYER MODE"-ot
+//  @brief Ez a fájl tartalmazza az "AIPLAYER MODE"-ot
 //  @{
 
 /// A legördülő listamező megmutatása
