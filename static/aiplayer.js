@@ -277,3 +277,5 @@ var rungame =function(response){
     var game = Game(response);
     game.update();
 }
+
+/// @}
