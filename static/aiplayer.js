@@ -1,5 +1,10 @@
-//this is the frontend script file
+/// @file singleplayer.js
+//  @author http://codeexplained.org
+//
+//  @brief Ez a fájl tartalmazza az "SINGLEPLAYER MODE"-ot
+//  @{
 
+/// A legördülő listamező megmutatása
 var show_label = function(){
     label[0] =  $('#gra_dd').val();
     label[1] = $('#jum_dd').val();
@@ -21,7 +26,13 @@ var hide_label = function(){
     $('#gap_dd').val(label[3]);
     $('#dis_dd').val(label[4]);
 }
-//dropdown menu
+
+/// A legördülő listamező létrehozása
+//  @param begin integer a lita eleje
+//  @param end integer a lsita vége
+//  @param add integer hányasával lépkedjen a lista
+//  @param label string a lista felirata
+//  @return optrions string a lista maga
 var dropdown = function(begin, end, add, label){
     options = "<option disabled>" + label + "</option>";
     for(var i=begin; i<=end; i=i+add){
@@ -30,7 +41,8 @@ var dropdown = function(begin, end, add, label){
     return options;
 }
 
-//function for /startgen post request, this starts the a new generation
+/// Minden generáció elején a /ai/startgen címre küldő POST kérés
+//  a rungame metódust hívja meg válasz után
 var start_gen = function(){
         $.ajax({
             type: "POST",
@@ -49,7 +61,7 @@ var start_gen = function(){
         });
 }
 
-//function for loading images
+/// Képek betöltése metódus
 var LoadImages = function () {
     bg = new Image();
     fg = new Image();
@@ -69,7 +81,8 @@ var LoadImages = function () {
     return self;
 }
 
-//class for Birds
+/// Madarakatat leíró osztály
+//  @param db_id string a madarak azonosítói
 var Bird = function (db_id) {
     var self = {
         bX: 10,
@@ -78,7 +91,10 @@ var Bird = function (db_id) {
         fitness: 0,
         alive: true
     }
-    //update function, the command can be 0 or 1, depends on the neural network
+    /// A madarak frissítése
+    //  @param gravity integer a gravitáció értéke
+    //  @param command integer 0 - semmi, 1 - ugorjon
+    //  @param jump intgere az ugrás magassága
     self.update = function (gravity, command, jump) {
         self.fitness++;
         self.bY += gravity;
@@ -86,7 +102,8 @@ var Bird = function (db_id) {
             self.moveUp(jump);
         }
     }
-    //funtion for moving up
+    /// Madár felfelé mozgása
+    //  @param jump az ugrás magassága
     self.moveUp = function (jump) {
         self.bY -= jump;
     }
@@ -94,7 +111,8 @@ var Bird = function (db_id) {
     return self;
 }
 
-//class for Pipes
+/// Oszlopokat leíró osztály
+//  @param y integer az oszlop közepének koordinátája
 var Pipe = function (y) {
     var self =
     {
@@ -107,7 +125,9 @@ var Pipe = function (y) {
     }
     return self;
 }
-//Game class which handles almost everything
+
+/// Játékok leíró osztály
+//  @param response running_params 
 var Game = function (response) {
     //variables mainly from backend response
     var fitness_scores = [];
@@ -120,52 +140,50 @@ var Game = function (response) {
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
-    //loading the images
+
     var img = LoadImages();
-    //creating the first pipe
+
     var pipe = [];
     pipe[0] = Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
     alive = population;
-    //creating the birds
+
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
         bird[i] = Bird(i);
     }
-    //this function is called in every moment
+    /// Játék frissítése metódus
+    //  minden időpillanatban küld egy POST kérést a /ai/jumpbird címre a madarak pozíciójával majd újra lefut
+    //  ha minden madár meghal akkor elküldi a fitness értékeket 
     self.update = function () {
-        //if there is any bird alive run, else /finishgen request is sent
-        //console.log(alive);
         if (alive > 0) {
             alive = 0;
-            ctx.drawImage(img.bg, 0, 0); //background drawing
-            //shifting the pipes if neccessary
+            ctx.drawImage(img.bg, 0, 0);
+
             for (var i = 0; i < pipe.length; i++) {
                 if (pipe[i].pX < 0 - img.pipeNorth.width) {
                     pipe.shift();
                 }
                 
                 constant = img.pipeNorth.height + gap;
-                ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY); //North pipe drawing
-                ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);//South pipe drawing
+                ctx.drawImage(img.pipeNorth, pipe[i].pX, pipe[i].pY);
+                ctx.drawImage(img.pipeSouth, pipe[i].pX, pipe[i].pY + constant);
                 
                 ctx.drawImage(img.welcome, canvas.width/2, 0);
                 
-                pipe[i].update(); //updating the pipes
+                pipe[i].update();
 
-                if (pipe[i].pX == distance) { //new pipe
+                if (pipe[i].pX == distance) { 
                     pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
                 }
 
             }
-            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height); //foreground drawing
+            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
-            //generation text
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
             ctx.textAlign = "left";
             ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
 
-            //request[] is for /jumbird request which contains data for neural network input
             request = [];
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
@@ -174,7 +192,6 @@ var Game = function (response) {
                     request.push(i + '#' + 'dead');
                 }
             }
-            //drawing the birds and killing the if neccessary
             for (var i = bird_begin; i <= bird_end; i++) {
                 if (bird[i].alive) {
                     bird[i].update(gravity, command[i-bird_begin], jump);
@@ -193,7 +210,6 @@ var Game = function (response) {
                 if(bird[i].alive){
                     alive++;
                 }
-                //drawing the birds fitness scores
                 var c = i - bird_begin + 1;
                 if (c < 10 ){
                     c = "0" + c;
@@ -212,7 +228,6 @@ var Game = function (response) {
                 ctx.stroke();
             }
 
-            //post request for /jumpird and start update function again
             $.ajax({
                     type: "POST",
                     url: "/ai/jumpbird",
@@ -231,7 +246,7 @@ var Game = function (response) {
                     }
                 });
 
-        }else{//after every generation sending the /finishgen request with the fitness scores
+        }else{
             request = [];
             for (var i = bird_begin; i <= bird_end; i++){
                 request.push(i + "#" + bird[i].fitness);
@@ -257,7 +272,7 @@ var Game = function (response) {
     return self;
 }
 
-//main function for the game
+/// Játék futtatása
 var rungame =function(response){
     var game = Game(response);
     game.update();

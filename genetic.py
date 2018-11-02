@@ -1,8 +1,15 @@
-#this file manages the Genetic algorithm
+## @file genetic.py
+#  @author Mark Vecsernyes
+#
+#  @brief Ez a fájl tartalmazza az evoluciós algoritmust
+#  @{ 
 
+## A szükséges könyvtárak importálása
 from database import Database
 
-#genetic algorithm
+## geneticAlgorithm metódus: ez az evolúciós algoritmus
+#  @param database Database adatbázis
+#  @param population integer a populació mérete
 def geneticAlgorithm(database, population):
     print("genetic algorithm called")
 
@@ -16,14 +23,19 @@ def geneticAlgorithm(database, population):
     #TODO: write to database the updated neural networks
     return
 
-#selection part of genetic algorithm
+## Selection metódus: az evolúciós algoritmus kiválasztás része
+#  @param database Database
 def selection(database):
     print("\t*selection called")
 
-#crossover part of genetic algorithm
+## Crossove metódus: az evolúciós algoritmus keresztezés része
+#  @param database Database
 def crossover(database):
     print("\t*crossover called")
 
-#mutation part of genetic algorithm
+## Mutáció metódus: az evolúciós algoritmus mutáció része
+#  @param database Database
 def mutation(database):
     print("\t*mutation called")
+
+##  @} 

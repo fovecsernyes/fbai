@@ -1,8 +1,14 @@
+/// @file singleplayer.js
+//  @author http://codeexplained.org
+//
+//  @brief Ez a fájl tartalmazza az "SINGLEPLAYER MODE"-ot
+//  @{
+
+/// Canvas beállítása
 var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
-// load images
-
+/// Globális változók
 var bird = new Image();
 var bg = new Image();
 var fg = new Image();
@@ -17,38 +23,30 @@ pipeNorth.src = "/static/images/pipeNorth.png";
 pipeSouth.src = "/static/images/pipeSouth.png";
 welcome.src = "/static/images/welcome.png";
 
-
-// some variables
-
 var gap = 120;
 var constant;
-
 var bX = 10;
 var bY = 150;
-
 var gravity = 1.5;
-
 var score = 0;
 
-// on key down
-
+/// Gomb lenyomásához listener
 document.addEventListener("keydown",moveUp);
 
+/// moveUp metódus a madár felfelé mozgásához
 function moveUp(){
     bY -= 25;
 }
 
-// pipe coordinates
-
+/// Az oszlopokat tartalmazó változó inicializálása
 var pipe = [];
-
 pipe[0] = {
     x : cvs.width/2,
     y : Math.floor(Math.random() * pipeNorth.height) - pipeNorth.height
 };
 
-// draw images
 
+/// Draw metódus ami a játék logikáját tartalmazza
 function draw(){
     ctx.drawImage(bg,0,0);
     
@@ -118,7 +116,7 @@ function draw(){
 
 draw();
 
-
+//  @} 
 
 
 

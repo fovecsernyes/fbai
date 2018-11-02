@@ -1,5 +1,10 @@
-#this file handles the backend
+## @file app.py
+#  @author Mark Vecsernyes
+#
+#  @brief Ez a fájl indítja el a backend szolgáltatásokat
+#  @{ 
 
+## A szükséges könyvtárak importálása
 from flask import *
 import json 
 import _pickle as pickle
@@ -7,42 +12,51 @@ from net import *
 from genetic import *
 from database import Database
 
-#initializing flask
+## Flask osztály példányosítása, ez kezeli a HTTP kommunikációt
 app = Flask(__name__)
 app.debug = True
 
-#these are the running parameters which are sent as a response
-running_params = { "generation":0, "gravity":0, "jump":0, "population":0,
-                    "gap": 0, "distance": 0, "bird_ids":[]}
+## utási paramétek, amik a frontendről fognak jönni a /templates/ai.html fájlból
+running_params = {  "generation":   0,
+                    "gravity":      0,
+                    "jump":         0,
+                    "population":   0,
+                    "gap":          0,
+                    "distance":     0,
+                    "bird_ids":    []}
 
-#neural network is a global list type variable
+## Neurális hálókat tartalmazó lista az "AI Player mode"-hoz
 neural_networks = []
 
+## GET kérés kezelése a / címen
+#  @return index.html oldal
 @app.route('/', methods=['GET'])
 def IndexRequest():
     return render_template('index.html')
 
-#single player page
+## GET kérés kezelése a /sp/ címen
+#  @return sp.html
 @app.route('/sp/', methods=['GET'])
 def SingleRequest():
     return render_template('sp.html')
 
-#handling get requests at '/ai' it is called when the page is (re)loaded
+## GET kérés kezelése a /ai/ címen
+#  @return ai.html
 @app.route('/ai/', methods=['GET'])
 def GetRequest():
     database_status=""
     return render_template('ai.html', database_status=database_status)
 
-#handling post requests at '/ai/'. it is called when 'Apply' button is pressed
+## POST kérés kezelése a /ai/ címen
+#  Apply gomb megnyomása után: adatbázis inicializálása, illetve a running_params beállítása
+#  @return ai.html, running_params 
 @app.route('/ai/', methods=['POST'])
 def ApplyRequest():
-    #bird ids and neural networks must be empty
     running_params['bird_ids'] = []
     neural_networks = []
 
-    #creating tables if not exist
     database_status = database.create_tables()
-    #setting and returning the running parameters from the post request
+
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
     running_params['jump'] = int(request.form['jump'])
@@ -50,18 +64,19 @@ def ApplyRequest():
     running_params['gap'] = int(request.form['gap'])
     running_params['distance'] = int(request.form['distance'])
     print("Parameters: " + str(running_params))
-    return render_template('ai.html', generation=running_params['generation'],
-                                        gravity=running_params['gravity'],
-                                        jump=running_params['jump'],
-                                        population=running_params['population'],
-                                        gap=running_params['gap'],
-                                        distance=running_params['distance'],
-                                        database_status=database_status)
+    return render_template('ai.html',   generation      = running_params['generation'],
+                                        gravity         = running_params['gravity'],
+                                        jump            = running_params['jump'],
+                                        population      = running_params['population'],
+                                        gap             = running_params['gap'],
+                                        distance        = running_params['distance'],
+                                        database_status = database_status)
 
-#handling post requests at '/ai/start'. it is called when 'Start' button is pressed
+## Post kérés kezelése a /ai/start címen
+#  Start gomb megnyomása után: hálók generálása, és beszúrása a táblákba
+#  @return ACK json
 @app.route('/ai/start', methods=['POST'])
 def StartRequest():
-    #generating and writing bird ids and neural networks to database
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
         neural_network = generateNet()
@@ -71,12 +86,12 @@ def StartRequest():
         running_params['bird_ids'].append(bird_id)
     return jsonify({"respond":"start"})
 
-#handling post requests at '/ai/startgen'. it is called before every generation
+## Post kérés kezelése a /ai/startgen címen
+#  Minden generáció előtti kérés: generáció növelése, hálók betöltése
+#  @return running_params
 @app.route('/ai/startgen', methods=['POST'])
 def StartGenRequest():
-    #generation number is must be increased
     running_params['generation'] += 1
-    #bird ids and neural networks are read from the database here
     birds_data = database.select_bird(running_params['population'])
     running_params['bird_ids'] = json.dumps( [str(i[0]) for i in birds_data] )
     j = 0
@@ -85,21 +100,23 @@ def StartGenRequest():
         j+=1
     return jsonify(running_params)
 
-#handling post requests at '/ai/finishgen'. it is called after every generation
+## Post kérés kezelése a /ai/finishgen címen
+#  Minden generáció utáni kérés: fintess beszúrása az adatbázisba, evoluciós algoritmus futtatása
+#  @return ACK json
 @app.route('/ai/finishgen', methods=['POST'])
 def FinishGenRequest():
-    #after every generation the fitness score is written to the database
     for i in request.json:
         bird_id, fitness_score = i.split('#')
         print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
 
-    #after every generation the genetic algorithm runs
     geneticAlgorithm(database, running_params['population'])
 
     return jsonify({"respond":"finishgen"})
 
-#handling post requests at '/ai/jumpbird'. it is called after every bird update
+## Post kérés kezelése a /ai/finishgen címen
+#  Minden időpillantaban a madarak ugrásának kiértékelése a neurális háló alapján. 0 - semmi, 1 - ugrás
+#  @return [0,1,1,1 .. 0, 1] lista
 @app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump
@@ -119,7 +136,9 @@ def JumpBirdRequest():
             respond.append ( 1 if float(out) > 0 else 0 ) 
     return jsonify( respond )
 
-#main function
+## Main függvény
 if __name__ == "__main__":
     database = Database()
     app.run()
+
+## @}
