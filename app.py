@@ -107,7 +107,7 @@ def StartGenRequest():
 def FinishGenRequest():
     for i in request.json:
         bird_id, fitness_score = i.split('#')
-        print(bird_id, fitness_score)
+        #print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
 
     geneticAlgorithm(database, running_params['population'])

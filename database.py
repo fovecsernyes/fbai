@@ -238,4 +238,26 @@ class Database(object):
                 self.conn.close()
         return bird
 
+    ## Lekérdezés a "FITNESS" táblából az utolsó n db erteket
+    #  @param population integer a populacio mérete
+    #  @return fitness ami a madár az azonosítóját es a fitness tartalmazza
+    def select_fitness(self, population):
+        sqlSelect = """SELECT bird_id, fitness_score FROM
+                    (SELECT * FROM fitness ORDER BY id DESC LIMIT %s) AS selectbird
+                    ORDER BY id ASC;"""
+
+        try:
+            #print("select_bird")
+            cur = self.conn.cursor()
+            cur.execute(sqlSelect, (population,))
+            fitness = cur.fetchall()
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if self.conn is None:
+                self.conn.close()
+        return fitness
+
 ## @}
