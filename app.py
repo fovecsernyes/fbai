@@ -17,13 +17,13 @@ app = Flask(__name__)
 app.debug = True
 
 ## utási paramétek, amik a frontendről fognak jönni a /templates/ai.html fájlból
-running_params = {  "generation":   0,
-                    "gravity":      0,
-                    "jump":         0,
-                    "population":   0,
-                    "gap":          0,
-                    "distance":     0,
-                    "bird_ids":    []}
+running_params = {  "generation":0,
+                    "gravity":0,
+                    "jump":0,
+                    "population":0,
+                    "gap":0,
+                    "distance":0,
+                    "bird_ids":[]}
 
 ## Neurális hálókat tartalmazó lista az "AI Player mode"-hoz
 neural_networks = []
