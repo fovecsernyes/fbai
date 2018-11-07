@@ -260,4 +260,24 @@ class Database(object):
                 self.conn.close()
         return fitness
 
+    ## Frissíti a neurális háló értékét a megadott id-nál a "BIRD" táblába
+    #  @param net a neurális haló
+    #  @param bird_id a madár azonosítója
+    def update_net(self, net, bird_id):
+        sqlSelect = """UPDATE "bird" 
+                     SET neural_network = %s
+                     WHERE id = %s;"""
+
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sqlSelect, (net, bird_id))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if self.conn is None:
+                self.conn.close()
+        return
+
 ## @}

@@ -10,6 +10,7 @@ from net import *
 import _pickle as pickle
 
 ## geneticAlgorithm metódus: ez az evolúciós algoritmus
+#  Adabázisból kiolvassa a madár id-t, neurális hálót és a fitnes értéket
 #  @param database Database adatbázis
 #  @param population integer a populació mérete
 def geneticAlgorithm(database, population):
@@ -21,15 +22,18 @@ def geneticAlgorithm(database, population):
 
     j = 0
     for i in birds_data:
-        sample.append( [ i[0], generateNet(), fitness[j][1] ] )
-        sample[j][1].load_state_dict( pickle.loads(i[1]) )
+        sample.append( [ i[0], pickle.loads(i[1]), fitness[j][1] ] )
         j+=1
+
+    sample.sort(key=lambda x: x[2])
 
     sample = selection(sample)
     sample = crossover(sample)
     sample = mutation(sample)
 
-    #TODO: write to database the updated neural networks (dont forget to pickle dump)
+    for i in sample:
+        database.update_net( pickle.dumps( i[1]), i[0] )
+
     return
 
 ## Selection metódus: az evolúciós algoritmus kiválasztás része

@@ -24,7 +24,7 @@
         <select name=gap id="gap_dd"></select>
         <select name=distance id="dis_dd"></select>
         
-        <input id="apply" type="submit" formmethod="POST" value="Apply" action="/"/>
+        <input id="apply" type="submit" formmethod="POST" value="Apply"/>
         <input id="start" type="button" value="Start game" />
         
     </form>
@@ -36,13 +36,13 @@
         // welcome page on canvas
         function onLoadFunction(){
             document.getElementById("gra_dd").innerHTML = dropdown(1,10,1, "Gravity");
-            document.getElementById("jum_dd").innerHTML = dropdown(10,30,5, "Jump");
-            document.getElementById("pop_dd").innerHTML = dropdown(5,50,5, "Population");
+            document.getElementById("jum_dd").innerHTML = dropdown(5,20,5, "Jump");
+            document.getElementById("pop_dd").innerHTML = dropdown(5,5000,5, "Population");
             document.getElementById("gap_dd").innerHTML = dropdown(70,120,5, "Gap");
             document.getElementById("dis_dd").innerHTML = dropdown(120,260,20, "Distance");
     
             $('#gra_dd').val("5");
-            $('#jum_dd').val("10");
+            $('#jum_dd').val("5");
             $('#pop_dd').val("50");
             $('#gap_dd').val("120");
             $('#dis_dd').val("160");
