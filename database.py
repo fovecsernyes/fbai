@@ -264,13 +264,13 @@ class Database(object):
     #  @param net a neurális haló
     #  @param bird_id a madár azonosítója
     def update_net(self, net, bird_id):
-        sqlSelect = """UPDATE "bird" 
+        sqlUpdate = """UPDATE "bird" 
                      SET neural_network = %s
                      WHERE id = %s;"""
 
         try:
             cur = self.conn.cursor()
-            cur.execute(sqlSelect, (net, bird_id))
+            cur.execute(sqlUpdate, (net, bird_id))
             self.conn.commit()
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:

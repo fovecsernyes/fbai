@@ -24,7 +24,7 @@
         <select name=gap id="gap_dd"></select>
         <select name=distance id="dis_dd"></select>
 
-        <select style="display:none" name=hidden id="hid_dd"></select>
+        <select name=hidden id="hid_dd"></select>
         <select style="display:none" name=selection id="sel_dd"></select>
         <select style="display:none" name=deletion id="del_dd"></select>
         <select style="display:none" name=crossover id="cro_dd"></select>
@@ -61,7 +61,7 @@
             $('#gap_dd').val("120");
             $('#dis_dd').val("160");
 
-            $('#hid_dd').val("6");
+            $('#hid_dd').val("10");
             $('#sel_dd').val("60");
             $('#del_dd').val("5");
             $('#cro_dd').val("80");
@@ -94,6 +94,13 @@
                     $('#pop_dd').val("{{population}}")
                     $('#gap_dd').val("{{gap}}")
                     $('#dis_dd').val("{{distance}}")
+
+                    $('#hid_dd').val("{{hidden}}")
+                    $('#sel_dd').val("{{selection}}")
+                    $('#del_dd').val("{{deletion}}")
+                    $('#cro_dd').val("{{crossover}}")
+                    $('#mu1_dd').val("{{mutation1}}")
+                    $('#mu2_dd').val("{{mutation2}}")
     
                     document.getElementById("apply").disabled = true;
                     document.getElementById("start").disabled = false;

@@ -10,11 +10,6 @@ from net import *
 import _pickle as pickle
 import random
 
-#disable request messages
-import logging
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
 ## geneticAlgorithm metódus: ez az evolúciós algoritmus
 #  Adabázisból kiolvassa a madár id-t, neurális hálót és a fitnes értéket
 #  @param database Database adatbázis
@@ -44,9 +39,9 @@ def geneticAlgorithm(database, population, hidden, selection, deletion, crossove
     mutated_children = mutation_method(children, mutation1, mutation2)
     sample = reinstate_method(mutated_children, sample)
 
-
-    for i in sample:
-        database.update_net( pickle.dumps( i[1]), i[0] )
+    #for i in sample:
+    #TODO it distroys the order
+    #    database.update_net( pickle.dumps( i[1]), i[0] )
 
     return
 
@@ -80,14 +75,9 @@ def selection_method(sample, population, selection):
 #  @param crossover keresztezési ráta
 def crossover_method(parents, population, crossover, deletion):
     print("\t*crossover called")
-    total = int( population - population * deletion/100 )
+    total = int( population - population * deletion/100 ) 
 
-    print(parents[3][1])
-    
     children = []
-    for i in range(total):
-        a = random.randint( 0, len(parents)-1 )
-        b = random.randint( 0, len(parents)-1 )
 
 
 

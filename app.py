@@ -12,6 +12,11 @@ from net import *
 from genetic import *
 from database import Database
 
+#disable request messages
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 ## Flask osztály példányosítása, ez kezeli a HTTP kommunikációt
 app = Flask(__name__)
 app.debug = True
@@ -59,7 +64,6 @@ def GetRequest():
 @app.route('/ai/', methods=['POST'])
 def ApplyRequest():
     running_params['bird_ids'] = []
-    neural_networks = []
 
     database_status = database.create_tables()
 
@@ -97,6 +101,8 @@ def ApplyRequest():
 #  @return ACK json
 @app.route('/ai/start', methods=['POST'])
 def StartRequest():
+    global neural_networks
+    neural_networks = []
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
         neural_network = generateNet(running_params['hidden'])
@@ -114,10 +120,13 @@ def StartGenRequest():
     running_params['generation'] += 1
     birds_data = database.select_bird(running_params['population'])
     running_params['bird_ids'] = json.dumps( [str(i[0]) for i in birds_data] )
+
     j = 0
+    global neural_networks
     for i in birds_data:
         neural_networks[j].load_state_dict( pickle.loads(i[1]) )
         j+=1
+
     return jsonify(running_params)
 
 ## Post kérés kezelése a /ai/finishgen címen
