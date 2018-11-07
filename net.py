@@ -10,8 +10,8 @@ from torch import autograd, nn
 import torch.nn.functional as F
 
 ## Neurális hálók generálása
-def generateNet():
-	return Net(input_size=3, hidden_size=4, num_classes=1)
+def generateNet(hidden):
+	return Net(input_size=3, hidden_size=hidden, num_classes=1)
 
 ## Neurális háló leíró osztálya
 class Net(nn.Module):

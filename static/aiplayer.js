@@ -11,12 +11,27 @@ var show_label = function(){
     label[2] = $('#pop_dd').val();
     label[3] = $('#gap_dd').val();
     label[4] = $('#dis_dd').val();
+        
+    label[5] = $('#hid_dd').val();
+    label[6] = $('#sel_dd').val();
+    label[7] = $('#del_dd').val();
+    label[8] = $('#cro_dd').val();
+    label[9] = $('#mu1_dd').val();
+    label[10] = $('#mu2_dd').val();
 
     $('#gra_dd').val("Gravity");
     $('#jum_dd').val("Jump");
     $('#pop_dd').val("Population");
     $('#gap_dd').val("Gap");
     $('#dis_dd').val("Distance");
+
+    $('#hid_dd').val("Hidden neurons");
+    $('#sel_dd').val("Selection rates");
+    $('#del_dd').val("Deletion rate");
+    $('#cro_dd').val("Crossover rate");
+    $('#mu1_dd').val("Mutation rate on population");
+    $('#mu2_dd').val("Mutation rate on entity");
+
 }
 
 var hide_label = function(){
@@ -25,6 +40,13 @@ var hide_label = function(){
     $('#pop_dd').val(label[2]);
     $('#gap_dd').val(label[3]);
     $('#dis_dd').val(label[4]);
+
+    $('#hid_dd').val(label[5]);
+    $('#sel_dd').val(label[6]);
+    $('#del_dd').val(label[7]);
+    $('#cro_dd').val(label[8]);
+    $('#mu1_dd').val(label[9]);
+    $('#mu2_dd').val(label[10]);
 }
 
 /// A legördülő listamező létrehozása

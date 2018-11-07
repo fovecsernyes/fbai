@@ -17,13 +17,19 @@ app = Flask(__name__)
 app.debug = True
 
 ## utási paramétek, amik a frontendről fognak jönni a /templates/ai.html fájlból
-running_params = {  "generation":0,
-                    "gravity":0,
-                    "jump":0,
-                    "population":0,
-                    "gap":0,
-                    "distance":0,
-                    "bird_ids":[]}
+running_params = {  "generation":   0,
+                    "gravity":      0,
+                    "jump":         0,
+                    "population":   0,
+                    "gap":          0,
+                    "distance":     0,
+                    "hidden":       0,
+                    "selection":    0,
+                    "deletion":     0,
+                    "crossover":    0,
+                    "mutation1":    0,
+                    "mutation2":    0,
+                    "bird_ids":     []}
 
 ## Neurális hálókat tartalmazó lista az "AI Player mode"-hoz
 neural_networks = []
@@ -63,6 +69,14 @@ def ApplyRequest():
     running_params['population'] = int(request.form['population'])
     running_params['gap'] = int(request.form['gap'])
     running_params['distance'] = int(request.form['distance'])
+
+    running_params['hidden'] = int(request.form['hidden'])
+    running_params['selection'] = int(request.form['selection'])
+    running_params['deletion'] = int(request.form['deletion'])
+    running_params['crossover'] = int(request.form['crossover'])
+    running_params['mutation1'] = int(request.form['mutation1'])
+    running_params['mutation2'] = int(request.form['mutation2'])
+
     print("Parameters: " + str(running_params))
     return render_template('ai.html',   generation      = running_params['generation'],
                                         gravity         = running_params['gravity'],
@@ -70,7 +84,13 @@ def ApplyRequest():
                                         population      = running_params['population'],
                                         gap             = running_params['gap'],
                                         distance        = running_params['distance'],
-                                        database_status = database_status)
+                                        hidden          = running_params['hidden'],
+                                        selection       = running_params['selection'],
+                                        deletion        = running_params['deletion'],
+                                        crossover       = running_params['crossover'],
+                                        mutation1       = running_params['mutation1'],
+                                        mutation2       = running_params['mutation2'],
+                                        database_status = database_status )
 
 ## Post kérés kezelése a /ai/start címen
 #  Start gomb megnyomása után: hálók generálása, és beszúrása a táblákba
@@ -79,7 +99,7 @@ def ApplyRequest():
 def StartRequest():
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
-        neural_network = generateNet()
+        neural_network = generateNet(running_params['hidden'])
         neural_networks.append(neural_network)
         neural_network = pickle.dumps( neural_network.state_dict() )
         bird_id = database.insert_bird( cycle_id, neural_network )
@@ -110,7 +130,13 @@ def FinishGenRequest():
         #print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
 
-    geneticAlgorithm(database, running_params['population'])
+    geneticAlgorithm(database,  running_params['population'],
+                                running_params['hidden'],
+                                running_params['selection'],
+                                running_params['deletion'],
+                                running_params['crossover'],
+                                running_params['mutation1'],
+                                running_params['mutation2'])
 
     return jsonify({"respond":"finishgen"})
 
