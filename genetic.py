@@ -8,6 +8,7 @@
 from database import Database
 from net import *
 import _pickle as pickle
+import random
 
 #disable request messages
 import logging
@@ -38,9 +39,11 @@ def geneticAlgorithm(database, population, hidden, selection, deletion, crossove
 
     sample.sort(key=lambda x: x[2], reverse=True)
 
-    sample = selection_method(sample, selection, deletion, hidden)
-    sample = crossover_method(sample, crossover)
-    sample = mutation_method(sample, mutation1, mutation2)
+    parents = selection_method(sample, population, selection)
+    children = crossover_method(parents, population, crossover, deletion)
+    mutated_children = mutation_method(children, mutation1, mutation2)
+    sample = reinstate_method(mutated_children, sample)
+
 
     for i in sample:
         database.update_net( pickle.dumps( i[1]), i[0] )
@@ -48,25 +51,47 @@ def geneticAlgorithm(database, population, hidden, selection, deletion, crossove
     return
 
 ## Selection metódus: az evolúciós algoritmus kiválasztás része
-#  @param neural_networks listák listája a madár azonosítójával és neurális hálójával
+#  veletlenszeru parokbol kivalasztja a jobbat, selection/population egeszresze darabot
 #  @param sample = [madar_id, neuralis_halo, fitness]
 #  @param selection kiválasztási ráta
-#  @param deletion törlési ráta
-#  @param hidden rejtett neuronok szama
-#  @return sample = [madar_id, neuralis_halo, fitness]
-def selection_method(sample, selection, deletion, hidden):
+#  @return parents = [madar_id, neuralis_halo, fitness]
+def selection_method(sample, population, selection):
     print("\t*selection called")
-    for i in sample:
-        print(str(i[0]) + '     ' + str(i[2]))
-    return sample
+
+    total = int( population * selection/100 )
+    #versengo veletlensz
+    parents = []
+    for i in range(total):
+        a = random.randint( 0, population-1 )
+        b = random.randint( 0, population-1 )
+
+        if sample[a][2] >= sample[b][2]:
+            parents.append(sample[a])
+        else:
+            parents.append(sample[b])
+
+    parents.sort(key=lambda x: x[2], reverse=True)
+
+    return parents
 
 ## Crossover metódus: az evolúciós algoritmus keresztezés része
 #  @param sample = [madar_id, neuralis_halo, fitness]
 #  @return sample = [madar_id, neuralis_halo, fitness]
 #  @param crossover keresztezési ráta
-def crossover_method(sample, crossover):
+def crossover_method(parents, population, crossover, deletion):
     print("\t*crossover called")
-    return sample
+    total = int( population - population * deletion/100 )
+
+    print(parents[3][1])
+    
+    children = []
+    for i in range(total):
+        a = random.randint( 0, len(parents)-1 )
+        b = random.randint( 0, len(parents)-1 )
+
+
+
+    return parents
 
 ## Mutáció metódus: az evolúciós algoritmus mutáció része
 #  @param sample = [madar_id, neuralis_halo, fitness]
@@ -75,6 +100,10 @@ def crossover_method(sample, crossover):
 #  @param mutation2 mutációs ráta az egyeden
 def mutation_method(sample, mutation1, mutation2):
     print("\t*mutation called")
+    return sample
+
+def reinstate_method(mutated_children, sample):
+    print("\t*reinstate called")
     return sample
 
 ##  @} 
