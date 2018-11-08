@@ -81,7 +81,7 @@ def ApplyRequest():
     running_params['mutation1'] = int(request.form['mutation1'])
     running_params['mutation2'] = int(request.form['mutation2'])
 
-    print("Parameters: " + str(running_params))
+    #print("Parameters: " + str(running_params))
     return render_template('ai.html',   generation      = running_params['generation'],
                                         gravity         = running_params['gravity'],
                                         jump            = running_params['jump'],

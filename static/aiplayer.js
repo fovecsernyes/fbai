@@ -232,7 +232,7 @@ var Game = function (response) {
                 if(bird[i].alive){
                     alive++;
                 }
-                var c = i - bird_begin + 1;
+                var c = i - bird_begin;
                 if (c < 10 ){
                     c = "0" + c;
                 }
@@ -243,7 +243,12 @@ var Game = function (response) {
                 }else{
                     ctx.fillStyle= "red";
                 }
-                ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 10 + c*10);
+                if( (i - bird_begin + 1) <= 50 ){
+                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 20 + c*10);
+                }else{
+                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 170, 20 + (c-50)*10);
+                }
+
                 ctx.beginPath();
                 ctx.moveTo(cvs.width/2,0);
                 ctx.lineTo(cvs.width/2,cvs.height);
