@@ -105,7 +105,7 @@ def StartRequest():
     neural_networks = []
     for _ in range(running_params['population']):
         cycle_id = database.insert_cycle('')
-        neural_network = generateNet(running_params['hidden'])
+        neural_network = generate_net(running_params['hidden'])
         neural_networks.append(neural_network)
         neural_network = pickle.dumps( neural_network.state_dict() )
         bird_id = database.insert_bird( cycle_id, neural_network )
@@ -136,10 +136,9 @@ def StartGenRequest():
 def FinishGenRequest():
     for i in request.json:
         bird_id, fitness_score = i.split('#')
-        #print(bird_id, fitness_score)
         database.insert_fitness(bird_id, fitness_score)
 
-    geneticAlgorithm(database,  running_params['population'],
+    genetic_algorithm(database,  running_params['population'],
                                 running_params['hidden'],
                                 running_params['selection'],
                                 running_params['deletion'],
@@ -155,6 +154,7 @@ def FinishGenRequest():
 @app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump
+    global neural_networks
     respond = []
     for i in request.json:
         #birds datas from post request, like id, bY, pX, pY
@@ -168,7 +168,7 @@ def JumpBirdRequest():
             input = autograd.Variable(torch.tensor([float(bY), float(pX), float(pY)]))
             index = (int(bird_id) - int(first_id))
             out = neural_networks[index](input)
-            respond.append ( 1 if float(out) > 0 else 0 ) 
+            respond.append ( 1 if int(out) > 0 else 0 ) 
     return jsonify( respond )
 
 ## Main függvény
