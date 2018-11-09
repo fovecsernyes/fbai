@@ -1,10 +1,10 @@
 /// @file aiplayer.js
 //  @author Mark Vecsernyes
 //
-//  @brief Ez a fájl tartalmazza az "AIPLAYER MODE"-ot
+//  @brief This file contains the "AIPLAYER MODE"
 //  @{
 
-/// A legördülő listamező megmutatása
+/// dropdown list
 var show_label = function(){
     label[0] =  $('#gra_dd').val();
     label[1] = $('#jum_dd').val();
@@ -49,12 +49,12 @@ var hide_label = function(){
     $('#mu2_dd').val(label[10]);
 }
 
-/// A legördülő listamező létrehozása
-//  @param begin integer a lita eleje
-//  @param end integer a lsita vége
-//  @param add integer hányasával lépkedjen a lista
-//  @param label string a lista felirata
-//  @return optrions string a lista maga
+/// Initializing dropdown list
+//  @param begin integer
+//  @param end integer
+//  @param add integer 
+//  @param label string
+//  @return options string
 var dropdown = function(begin, end, add, label){
     options = "<option disabled>" + label + "</option>";
     for(var i=begin; i<=end; i=i+add){
@@ -63,8 +63,8 @@ var dropdown = function(begin, end, add, label){
     return options;
 }
 
-/// Minden generáció elején a /ai/startgen címre küldő POST kérés
-//  a rungame metódust hívja meg válasz után
+/// Post request to /ai/startgen after every generation
+//  calls rungame() method
 var start_gen = function(){
         $.ajax({
             type: "POST",
@@ -83,7 +83,7 @@ var start_gen = function(){
         });
 }
 
-/// Képek betöltése metódus
+/// Loading pictures
 var LoadImages = function () {
     bg = new Image();
     fg = new Image();
@@ -103,8 +103,8 @@ var LoadImages = function () {
     return self;
 }
 
-/// Madarakatat leíró osztály
-//  @param db_id string a madarak azonosítói
+/// Birds class
+//  @param db_id string the id of the birds
 var Bird = function (db_id) {
     var self = {
         bX: 10,
@@ -113,10 +113,10 @@ var Bird = function (db_id) {
         fitness: 0,
         alive: true
     }
-    /// A madarak frissítése
-    //  @param gravity integer a gravitáció értéke
-    //  @param command integer 0 - semmi, 1 - ugorjon
-    //  @param jump intgere az ugrás magassága
+    /// Updating birds
+    //  @param gravity integer
+    //  @param command list [0, 1, .. 1, 0]
+    //  @param jump integer jumping height
     self.update = function (gravity, command, jump) {
         self.fitness++;
         self.bY += gravity;
@@ -124,8 +124,8 @@ var Bird = function (db_id) {
             self.moveUp(jump);
         }
     }
-    /// Madár felfelé mozgása
-    //  @param jump az ugrás magassága
+    /// Moving up
+    //  @param jump integer
     self.moveUp = function (jump) {
         self.bY -= jump;
     }
@@ -133,8 +133,8 @@ var Bird = function (db_id) {
     return self;
 }
 
-/// Oszlopokat leíró osztály
-//  @param y integer az oszlop közepének koordinátája
+/// Pipe class
+//  @param y integer the center of the pipe
 var Pipe = function (y) {
     var self =
     {
@@ -148,7 +148,7 @@ var Pipe = function (y) {
     return self;
 }
 
-/// Játékok leíró osztály
+/// Gae class
 //  @param response running_params 
 var Game = function (response) {
     //variables mainly from backend response
@@ -159,6 +159,7 @@ var Game = function (response) {
     var jump = response["jump"];
     var distance = 288 - response["distance"];
     var birds_ids = JSON.parse(response["bird_ids"]);
+    var generation = parseInt(response["generation"]);
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
@@ -166,16 +167,16 @@ var Game = function (response) {
     var img = LoadImages();
 
     var pipe = [];
-    pipe[0] = Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
+    pipe[0] = Pipe(-100);//Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
     alive = population;
 
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
         bird[i] = Bird(i);
     }
-    /// Játék frissítése metódus
-    //  minden időpillanatban küld egy POST kérést a /ai/jumpbird címre a madarak pozíciójával majd újra lefut
-    //  ha minden madár meghal akkor elküldi a fitness értékeket 
+    /// Updating game
+    //  sends a post request to /ai/jumbird in every moment to get the commands
+    //  when all birds die it sends post reques with the fitness values to /ai/finishgen
     self.update = function () {
         if (alive > 0) {
             alive = 0;
@@ -195,7 +196,7 @@ var Game = function (response) {
                 pipe[i].update();
 
                 if (pipe[i].pX == distance) { 
-                    pipe.push(Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
+                    pipe.push(Pipe(-100));//Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
                 }
 
             }
@@ -204,7 +205,7 @@ var Game = function (response) {
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
             ctx.textAlign = "left";
-            ctx.fillText(response["generation"] + ". GENERATION", cvs.width/2 + 20, 10);
+            ctx.fillText(generation + ". GENERATION", cvs.width/2 + 20, 10);
 
             request = [];
             for (var i = bird_begin; i <= bird_end; i++) {
@@ -299,7 +300,7 @@ var Game = function (response) {
     return self;
 }
 
-/// Játék futtatása
+/// Run the game
 var rungame =function(response){
     var game = Game(response);
     game.update();

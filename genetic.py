@@ -1,10 +1,10 @@
 ## @file genetic.py
 #  @author Mark Vecsernyes
 #
-#  @brief Ez a fájl tartalmazza az evoluciós algoritmust
+#  @brief This file contains the genetic algorithm
 #  @{ 
 
-## A szükséges könyvtárak importálása
+## Import modules
 from database import Database
 from net import *
 import _pickle as pickle
@@ -12,16 +12,16 @@ import random
 from collections import OrderedDict
 import numpy
 
-## geneticAlgorithm metódus: ez az evolúciós algoritmus
-#  Adabázisból kiolvassa a madár id-t, neurális hálót és a fitnes értéket
-#  @param database Database adatbázis
-#  @param population integer a populació mérete
-#  @param hidden rejtett neuronok szama
-#  @param selection kiválasztási ráta
-#  @param deletion törlési ráta
-#  @param crossover keresztezési ráta
-#  @param mutation1 mutációs ráta a populáción
-#  @param mutation2 mutációs ráta az egyeden
+## Genetic algorithm method
+#  Reads the neural networks from database and modifies them and writes them back
+#  @param database Database
+#  @param population integer 
+#  @param hidden integer hidden neurons
+#  @param selection integer selection rate
+#  @param deletion integer deletion rate
+#  @param crossover integer crossover rate
+#  @param mutation1 integer mutation rate of all birds
+#  @param mutation2 integer mutation rate on entity
 def genetic_algorithm(database, population, hidden, selection, deletion, crossover, mutation1, mutation2):
     birds_data = database.select_bird(population)
     fitness = database.select_fitness(population)
@@ -44,12 +44,12 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
 
     return
 
-## Selection metódus: az evolúciós algoritmus kiválasztás része
-#  veletlenszeru parokbol kivalasztja a jobbat, population * selection/100 egeszresze darabot, de az elso 3-at mindekepp
-#  @param sample = [madar_id, neuralis_halo, fitness]
-#  @param population a populáció mérete
-#  @param selection kiválasztási ráta
-#  @return parents a neurális hálók listája OrderedDictionary formátumban
+## Selection method
+#  select (population * selction)/100 birds from the best of random pairs
+#  @param sample = [bird_id, neural_network, fitness]
+#  @param population integer
+#  @param selection integer
+#  @return parents [net, .., net]
 def selection_method(sample, population, selection):
     total = int( population * selection/100 )
     parents = []
@@ -65,12 +65,12 @@ def selection_method(sample, population, selection):
 
     return parents
 
-## Crossover metódus: az evolúciós algoritmus keresztezés része
-#  population * crossover/100 db utodot hozunk letre
-#  @param parents a neurális hálók listája OrderedDict formátumban
-#  @param population a populáció mérete
-#  @param crossover keresztezési ráta
-#  @return neurális hálók listája OrderedDictionary formátumban
+## Crossover method
+#  makes (population * crossover/100) children of the parents
+#  @param parents [net, .., net]
+#  @param population integer
+#  @param crossover integer
+#  @return [net, .. , net]
 def crossover_method(parents, population, crossover):
     total = int(population * crossover/100) 
 
@@ -102,13 +102,13 @@ def crossover_method(parents, population, crossover):
     
     return children
 
-## Mutáció metódus: az evolúciós algoritmus mutáció része
-#  @param children neurális halók listája
-#  @population populacio merete
-#  @hidden rejtett neuronok száma
-#  @param mutation1 mutációs ráta a populáción
-#  @param mutation2 mutációs ráta az egyeden
-#  @return mutated_childer nuralis halok
+## Mutation method
+#  @param childen integer
+#  @population integer
+#  @hidden integer
+#  @param mutation1 integer
+#  @param mutation2 integer
+#  @return [net, .., net]
 def mutation_method(children, population, hidden, mutation1, mutation2):
     total = int(population * mutation1/100)
 
@@ -137,6 +137,13 @@ def mutation_method(children, population, hidden, mutation1, mutation2):
 
     return children
 
+## Reinertion method
+#  Inserts new birds into the population
+#  @param sample = [bird_id, neural_network, fitness]
+#  @param population integer 
+#  @param hidden integer
+#  @param deletion integer
+#  @return sample = [bird_id, neural_network, fitness]
 def reinsertion_method(children, sample, population, hidden, deletion):
     start = population - len(children) - deletion
 
@@ -150,9 +157,9 @@ def reinsertion_method(children, sample, population, hidden, deletion):
 
     return sample
 
-## OrederedDict típusból 4 mátrixot készít
-#  @param odict OrderDictionary
-#  @return r0, r1, r2, r3 numpy tömbök
+## Makes 4 matrices from OrederedDictionary
+#  @param odict OrderedDictionary
+#  @return r0, r1, r2, r3 numpy arrays
 def make_matrix(odict):
     dict_list = list( odict.items() )
     r0 = dict_list[0][1].numpy()
@@ -162,24 +169,16 @@ def make_matrix(odict):
 
     return r0, r1, r2, r3
 
-## 4 tömbből egy Ordereddict típust készít
-#  @param r0, r1, r2, r3 tömbök
+## Makes OrderedDicttionary from 4 matrices
+#  @param r0 numpy array
+#  @param r1 numpy array
+#  @param r2 numpy array
+#  @param r3 numpy array
 #  return OrderedDicttionary
 def make_odict(r0, r1, r2, r3):
     return OrderedDict([('fc1.weight', torch.from_numpy(r0)),
                         ('fc1.bias', torch.from_numpy(r1)),
                         ('fc2.weight', torch.from_numpy(r2)),
                         ('fc2.bias', torch.from_numpy(r3))])
-
-
-
-
-
-
-
-
-
-
-
 
 ##  @} 

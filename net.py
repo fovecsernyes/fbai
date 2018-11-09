@@ -1,33 +1,33 @@
 ## @file net.py
 #  @author Mark Vecsernyes
 #
-#  @brief Ez a fájl tartalmazza a neurális hálót
+#  @brief This file contains the neural network
 #  @{ 
 
-## A szükséges könyvtárak importálása
+## AImport modules
 import torch
 from torch import autograd, nn
 import torch.nn.functional as F
 
-## Neurális hálók generálása
+## Generate nets
 def generate_net(hidden):
 	return Net(input_size=3, hidden_size=hidden, num_classes=1)
 
-## Neurális háló leíró osztálya
+## Class of neural networks
 class Net(nn.Module):
-    ## Konstruktor
-    #  @param input size integer bemeneti adatok száma
-    #  @param hidden size integer rejtett réteg száma
-    #  @param integer osztályok száma
+    ## Constructor
+    #  @param input_size integer
+    #  @param hidden_size integer
+    #  @param num_classes integer
     def __init__(self, input_size, hidden_size, num_classes):
         super(Net, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size) 
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, num_classes)  
     
-    ##Forward metódus
-    #  @param x input_size méretű float elemeket tartalmazó lista
-    #  @paramt out float a neurális háló futásának eremdénye 
+    ##Forward method
+    #  @param x input vector
+    #  @return out
     def forward(self, x):
         out = self.fc1(x)
         out = self.relu(out)

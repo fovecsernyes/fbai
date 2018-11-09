@@ -1,16 +1,16 @@
 ## @file database.py
 #  @author Mark Vecsernyes
 #
-#  @brief Ez a fájl kezeli az adatbázist
+#  @brief This file handles the database
 #  @{ 
 
-## A szükséges könyvtárak importálása
+## Import modules
 import psycopg2
 from config import config
 
-## Database osztály az adatbázis kezeléséhez
+## Database class
 class Database(object):
-    ## Konstruktor: kapcsolódik az adatbázishoz
+    ## Constructor connects to db
     def __init__(self):
         self.conn = None
         try:
@@ -20,12 +20,12 @@ class Database(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    ## Destruktor: lecsatlakozik az adatbázisról
+    ## Destructor disconnects from db
     def __del__(self):
         self.conn.close()
         print('Database connection closed.')
 
-    ## Táblák létrehozása ha nem létezik
+    ## Initializunk tables if not exist
     #  @return "OK" string
     def create_tables(self):
 
@@ -118,8 +118,9 @@ class Database(object):
         print("Database intialized")
         return "OK"
 
-    ## Beszúrás és frissítés a "CYCLE" táblában
+    ## Inserting and updating in cycle table
     #  @param parameters string
+    #  @return cycle id
     def insert_cycle(self, parameters):
         sqlInsert = """INSERT INTO public.cycle(parameters)
                         VALUES(%s) RETURNING id;"""
@@ -149,10 +150,10 @@ class Database(object):
             cycle_id = -1
         return cycle_id
 
-    ## Beszúrás és frissítés a "BIRD" táblában
-    #  @param cycle_id string a ciklus száma
-    #  @param neural_network object neurális hálók pickle dump-olva
-    #  @return bird_id a madarak azonosítói
+    ## Inserting and updating in bird table
+    #  @param cycle_id string 
+    #  @param neural_network string
+    #  @return bird_id string
     def insert_bird(self, cycle_id, neural_network):
         sqlInsert = """INSERT INTO public.bird(cycle_id)
                    VALUES(%s) RETURNING id;"""
@@ -182,10 +183,10 @@ class Database(object):
             bird_id = -1
         return bird_id
 
-    ## Beszúrás és frissítés a "FITNESS" táblában
-    #  @param brid_id string a madarak azonosítói
-    #  @param fitness_score string a madár fitness értéke
-    #  @return fitness_id string fitness értékek azonosítói
+    ## Inserting and updating in fitness table
+    #  @param brid_id string
+    #  @param fitness_score string
+    #  @return fitness_id string
     def insert_fitness(self, bird_id, fitness_score):
         sqlInsert = """INSERT INTO public.fitness(cycle_id, bird_id)
                         VALUES((SELECT MAX(id) FROM public.cycle), %s) RETURNING id;"""
@@ -196,12 +197,10 @@ class Database(object):
         updated_rows = 0
         fitness_id = 0
         try:
-            #print("insert_fitness")
             cur = self.conn.cursor()
             cur.execute(sqlInsert, (bird_id,))
             fitness_id = cur.fetchone()[0]
             self.conn.commit()
-            #print("update_fitness")
             cur.execute(sqlUpdate, (fitness_score, fitness_id))
             updated_rows = cur.rowcount
             self.conn.commit()
@@ -216,16 +215,15 @@ class Database(object):
             fitness_id = -1
         return fitness_id
 
-    ## Lekérdezés a "BIRD" táblából az utolsó n db maradat
-    #  @param population integer a populacio mérete
-    #  @return bird ami az az azonosítót es a neurális hálókat tartalmazza
+    ## Select from bird table
+    #  @param population integer
+    #  @return ids and neural networks
     def select_bird(self, population):
         sqlSelect = """SELECT id, neural_network FROM
                     (SELECT * FROM bird ORDER BY id DESC LIMIT %s) AS selectbird
                     ORDER BY id ASC;"""
 
         try:
-            #print("select_bird")
             cur = self.conn.cursor()
             cur.execute(sqlSelect, (population,))
             bird = cur.fetchall()
@@ -238,16 +236,15 @@ class Database(object):
                 self.conn.close()
         return bird
 
-    ## Lekérdezés a "FITNESS" táblából az utolsó n db erteket
-    #  @param population integer a populacio mérete
-    #  @return fitness ami a madár az azonosítóját es a fitness tartalmazza
+    ## Select from fitness table
+    #  @param population integer
+    #  @return fitness
     def select_fitness(self, population):
         sqlSelect = """SELECT bird_id, fitness_score FROM
                     (SELECT * FROM fitness ORDER BY id DESC LIMIT %s) AS selectbird
                     ORDER BY id ASC;"""
 
         try:
-            #print("select_bird")
             cur = self.conn.cursor()
             cur.execute(sqlSelect, (population,))
             fitness = cur.fetchall()
@@ -260,9 +257,9 @@ class Database(object):
                 self.conn.close()
         return fitness
 
-    ## Frissíti a neurális háló értékét a megadott id-nál a "BIRD" táblába
-    #  @param net a neurális haló
-    #  @param bird_id a madár azonosítója
+    ## Updates the fitness value at given id
+    #  @param net neural network
+    #  @param bird_id string
     def update_net(self, net, bird_id):
         sqlUpdate = """UPDATE "bird" 
                      SET neural_network = %s
@@ -278,6 +275,5 @@ class Database(object):
         finally:
             if self.conn is None:
                 self.conn.close()
-        return
 
 ## @}

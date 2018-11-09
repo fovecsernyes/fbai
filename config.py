@@ -1,16 +1,16 @@
 ## @file config.py
 #  @author Mark Vecsernyes
 #
-#  @brief Ez a fájl indítja el a backend szolgáltatásokat
+#  @brief This loads the database configurations
 #  @{ 
 
-## A szükséges könyvtárak importálása
+## Import modules
 from configparser import ConfigParser
 
-## Adatbázis konfigurálása a fájlból
-#  @param filename string a konfigurációs fájl neve
-#  @param section string a használt szolgáltatás neve
-#  @return Dictionary a konfigurációs paraméterekkel
+## Database configuration from file
+#  @param filename string the name of the config file
+#  @param section string used service name
+#  @return Dictionary with the configuration values
 def config(filename='database.ini', section='postgresql'):
     parser = ConfigParser()
     parser.read(filename)
