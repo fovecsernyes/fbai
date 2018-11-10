@@ -161,7 +161,11 @@ def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump
     global neural_networks
     respond = []
+
+    deleteme = generate_net(6).state_dict()
+
     for i in request.json:
+
         #birds datas from post request, like id, bY, pX, pY
         ids = json.loads(running_params['bird_ids'])
         #fist bird id
@@ -170,7 +174,7 @@ def JumpBirdRequest():
         #running the neural network
         if params != 'dead':
             bY,pX,pY = params.split(',')
-            input = autograd.Variable(torch.tensor([float(bY), float(pX), float(pY)]))
+            input = torch.tensor([float(bY), float(pX), float(pY)])
             index = (int(bird_id) - int(first_id))
             out = neural_networks[index](input)
             respond.append ( 1 if int(out) > 0 else 0 ) 

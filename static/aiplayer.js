@@ -83,6 +83,8 @@ var start_gen = function(){
         });
 }
 
+var best_fitness = 0;
+
 /// Loading pictures
 var LoadImages = function () {
     bg = new Image();
@@ -166,14 +168,18 @@ var Game = function (response) {
 
     var img = LoadImages();
 
-    var pipe = [];
-    pipe[0] = Pipe(-100);//Pipe(Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height);
-    alive = population;
 
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
         bird[i] = Bird(i);
     }
+
+    var pipe = [];
+    max = -50;
+    min = -256 + 100
+    pipe[0] = Pipe( Math.random() * (max - min) + min);
+    console.log( img.pipeNorth.height )
+    alive = population;
     /// Updating game
     //  sends a post request to /ai/jumbird in every moment to get the commands
     //  when all birds die it sends post reques with the fitness values to /ai/finishgen
@@ -196,11 +202,16 @@ var Game = function (response) {
                 pipe[i].update();
 
                 if (pipe[i].pX == distance) { 
-                    pipe.push(Pipe(-100));//Math.floor(Math.random() * img.pipeNorth.height) - img.pipeNorth.height));
+                    pipe.push(Pipe( Math.random() * (max - min) + min ));
                 }
 
             }
             ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
+
+            ctx.fillStyle="black";
+            ctx.font="14px Monospace";
+            ctx.textAlign = "left";
+            ctx.fillText("Best: " + best_fitness, 0, cvs.height - 10);
 
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
@@ -277,6 +288,11 @@ var Game = function (response) {
         }else{
             request = [];
             for (var i = bird_begin; i <= bird_end; i++){
+
+                if(bird[i].fitness > best_fitness){
+                    best_fitness = bird[i].fitness;
+                }
+
                 request.push(i + "#" + bird[i].fitness);
             }
             

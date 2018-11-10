@@ -93,13 +93,7 @@ def crossover_method(parents, population, crossover):
             r3 = q3
 
         children.append( make_odict(r0, r1, r2, r3) )
-
-        #TODO FIX the neural net changes after runs
-        #asd.load_state_dict( children[0] )
-        #input = autograd.Variable(torch.tensor([float(10), float(20), float(30)]))
-        #out = asd(input)
-        #print(float(out))
-    
+        
     return children
 
 ## Mutation method
@@ -111,7 +105,6 @@ def crossover_method(parents, population, crossover):
 #  @return [net, .., net]
 def mutation_method(children, population, hidden, mutation1, mutation2):
     total = int(population * mutation1/100)
-
     for i in range(total):
         pos = random.randint( 0, len(children)-1 )
         r0, r1, r2, r3 = make_matrix(children[pos])
@@ -124,14 +117,18 @@ def mutation_method(children, population, hidden, mutation1, mutation2):
             where = random.randint( 0, 3 )
             if where == 0:
                 r = random.randint( 0, hidden-1 )
-                r0[r] *= random.uniform(-1, 1)
+                q = random.randint( 0, 2 )
+                r0[r][q] = random.uniform(-1, 1)
+
             elif where == 1:
                 r = random.randint( 0, hidden-1 )
-                r1[r] *= random.uniform(-1, 1)
+                r1[r] = random.uniform(-1, 1)
+
             elif where == 2:
-                r2 *= random.uniform(-1, 1)
+                r = random.randint( 0, hidden-1 )
+                r2[0][r] = random.uniform(-1, 1)
             else:
-                r3 *= random.uniform(-1, 1)
+                r3[0] = random.uniform(-1, 1)
 
         children[pos] = make_odict(r0, r1, r2, r3)
 

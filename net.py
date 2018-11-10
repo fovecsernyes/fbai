@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 ## Generate nets
 def generate_net(hidden):
-	return Net(input_size=3, hidden_size=hidden, num_classes=1)
+	return Net(input_size=3, hidden_size=hidden)
 
 ## Class of neural networks
 class Net(nn.Module):
@@ -19,18 +19,18 @@ class Net(nn.Module):
     #  @param input_size integer
     #  @param hidden_size integer
     #  @param num_classes integer
-    def __init__(self, input_size, hidden_size, num_classes):
+    def __init__(self, input_size, hidden_size):
         super(Net, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size) 
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(hidden_size, num_classes)  
+        self.fc2 = nn.Linear(hidden_size, 1)  
+
     
     ##Forward method
     #  @param x input vector
     #  @return out
     def forward(self, x):
-        out = self.fc1(x)
-        out = self.relu(out)
+        out = self.relu(self.fc1(x))
         out = self.fc2(out)
         return out
 
