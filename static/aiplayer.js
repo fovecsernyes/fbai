@@ -4,64 +4,10 @@
 //  @brief This file contains the "AIPLAYER MODE"
 //  @{
 
-/// dropdown list
-var show_label = function(){
-    label[0] =  $('#gra_dd').val();
-    label[1] = $('#jum_dd').val();
-    label[2] = $('#pop_dd').val();
-    label[3] = $('#gap_dd').val();
-    label[4] = $('#dis_dd').val();
-        
-    label[5] = $('#hid_dd').val();
-    label[6] = $('#sel_dd').val();
-    label[7] = $('#del_dd').val();
-    label[8] = $('#cro_dd').val();
-    label[9] = $('#mu1_dd').val();
-    label[10] = $('#mu2_dd').val();
-
-    $('#gra_dd').val("Gravity");
-    $('#jum_dd').val("Jump");
-    $('#pop_dd').val("Population");
-    $('#gap_dd').val("Gap");
-    $('#dis_dd').val("Distance");
-
-    $('#hid_dd').val("Hidden neurons");
-    $('#sel_dd').val("Selection rates");
-    $('#del_dd').val("Deletion rate");
-    $('#cro_dd').val("Crossover rate");
-    $('#mu1_dd').val("Mutation rate on population");
-    $('#mu2_dd').val("Mutation rate on entity");
-
+var show_value = function(id){
+    return $(id).val();
 }
 
-var hide_label = function(){
-    $('#gra_dd').val(label[0]);
-    $('#jum_dd').val(label[1]);
-    $('#pop_dd').val(label[2]);
-    $('#gap_dd').val(label[3]);
-    $('#dis_dd').val(label[4]);
-
-    $('#hid_dd').val(label[5]);
-    $('#sel_dd').val(label[6]);
-    $('#del_dd').val(label[7]);
-    $('#cro_dd').val(label[8]);
-    $('#mu1_dd').val(label[9]);
-    $('#mu2_dd').val(label[10]);
-}
-
-/// Initializing dropdown list
-//  @param begin integer
-//  @param end integer
-//  @param add integer 
-//  @param label string
-//  @return options string
-var dropdown = function(begin, end, add, label){
-    options = "<option disabled>" + label + "</option>";
-    for(var i=begin; i<=end; i=i+add){
-        options += "<option>"+ i +"</option>";
-    }
-    return options;
-}
 
 /// Post request to /ai/startgen after every generation
 //  calls rungame() method
@@ -165,6 +111,7 @@ var Game = function (response) {
     var bird_begin = parseInt(birds_ids[0]);
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
+    var threshold = parseInt(response["threshold"]);
 
     var img = LoadImages();
 
@@ -292,25 +239,31 @@ var Game = function (response) {
                 if(bird[i].fitness > best_fitness){
                     best_fitness = bird[i].fitness;
                 }
-
                 request.push(i + "#" + bird[i].fitness);
             }
+            if(best_fitness > threshold){
+                ctx.fillStyle="red";
+                ctx.font="20px Monospace";
+                ctx.textAlign = "center";
+                ctx.fillText("Threshold met", cvs.width/4, cvs.height/2);
+            }else{
+                $.ajax({
+                        type: "POST",
+                        url: "/ai/finishgen",
+                        contentType: "application/json",
+                        data: JSON.stringify( request ),
+                        dataType: "json",
+                        async: false,
+                        success: function(response) {
+                            console.log(response);
+                            start_gen();
+                        },
+                        error: function(err) {
+                            console.log(err || 'Error!');
+                        }
+                    });
+            }
             
-            $.ajax({
-                    type: "POST",
-                    url: "/ai/finishgen",
-                    contentType: "application/json",
-                    data: JSON.stringify( request ),
-                    dataType: "json",
-                    async: false,
-                    success: function(response) {
-                        console.log(response);
-                        start_gen();
-                    },
-                    error: function(err) {
-                        console.log(err || 'Error!');
-                    }
-                });
         }
     }
     return self;

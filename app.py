@@ -34,6 +34,7 @@ running_params = {  "generation":   0,
                     "crossover":    0,
                     "mutation1":    0,
                     "mutation2":    0,
+                    "threshold":    0,
                     "bird_ids":     []}
 
 ## Neural networks as global variable
@@ -74,13 +75,13 @@ def ApplyRequest():
     running_params['population'] = int(request.form['population'])
     running_params['gap'] = int(request.form['gap'])
     running_params['distance'] = int(request.form['distance'])
-
     running_params['hidden'] = int(request.form['hidden'])
     running_params['selection'] = int(request.form['selection'])
     running_params['deletion'] = int(request.form['deletion'])
     running_params['crossover'] = int(request.form['crossover'])
     running_params['mutation1'] = int(request.form['mutation1'])
     running_params['mutation2'] = int(request.form['mutation2'])
+    running_params['threshold'] = int(request.form['threshold'])
 
     #print("Parameters: " + str(running_params))
     return render_template('ai.html',   generation      = running_params['generation'],
@@ -95,6 +96,7 @@ def ApplyRequest():
                                         crossover       = running_params['crossover'],
                                         mutation1       = running_params['mutation1'],
                                         mutation2       = running_params['mutation2'],
+                                        threshold       = running_params['threshold'],
                                         database_status = database_status )
 
 ## Post request at /ai/start

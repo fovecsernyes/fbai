@@ -115,7 +115,6 @@ class Database(object):
              cur.execute(command)
         cur.close()
         self.conn.commit()
-        print("Database intialized")
         return "OK"
 
     ## Inserting and updating in cycle table
