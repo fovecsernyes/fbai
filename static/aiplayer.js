@@ -121,10 +121,10 @@ var Game = function (response) {
     }
 
     var pipe = [];
-    min = -256 + 150;
-    max = 0;
+    var min = -256 + 150;
+    var max = 0;
     pipe[0] = Pipe( Math.random() * (max - min) + min);
-    alive = population;
+    var alive = population;
     /// Updating game
     //  sends a post request to /ai/jumbird in every moment to get the commands
     //  when all birds die it sends post reques with the fitness values to /ai/finishgen

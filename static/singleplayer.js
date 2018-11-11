@@ -22,12 +22,14 @@ pipeNorth.src = "/static/images/pipeNorth.png";
 pipeSouth.src = "/static/images/pipeSouth.png";
 welcome.src = "/static/images/welcome.png";
 
-var gap = 120;
+var gap = 100;
 var constant;
 var bX = 10;
 var bY = 150;
 var gravity = 1.5;
 var score = 0;
+var min = -256 + 250;
+var max = 0;
 
 /// Event listner when pressing key
 document.addEventListener("keydown",moveUp);
@@ -41,7 +43,7 @@ function moveUp(){
 var pipe = [];
 pipe[0] = {
     x : cvs.width/2,
-    y : Math.floor(Math.random() * pipeNorth.height) - pipeNorth.height
+    y : Math.random() * (max - min) + min
 };
 
 
@@ -62,7 +64,7 @@ function draw(){
         if( pipe[i].x == 125 ){
             pipe.push({
                 x : cvs.width/2,
-                y : Math.floor(Math.random()*pipeNorth.height)-pipeNorth.height
+                y : Math.random() * (max - min) + min
             }); 
         }
 
