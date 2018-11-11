@@ -125,7 +125,6 @@ var Game = function (response) {
     max = -50;
     min = -256 + 100
     pipe[0] = Pipe( Math.random() * (max - min) + min);
-    console.log( img.pipeNorth.height )
     alive = population;
     /// Updating game
     //  sends a post request to /ai/jumbird in every moment to get the commands
@@ -182,6 +181,12 @@ var Game = function (response) {
                             bird[i].alive = false;
                             if (fitness_scores[i] == null){
                                 fitness_scores[i] = bird[i].fitness;
+                            }else if(fitness_scores[i] > threshold){
+                                ctx.fillStyle="red";
+                                ctx.font="20px Monospace";
+                                ctx.textAlign = "center";
+                                ctx.fillText("Threshold met", cvs.width/4, cvs.height/2);
+                                return;
                             }else{
                                 fitness_scores[i] += bird[i].fitness;
                             }
@@ -241,28 +246,21 @@ var Game = function (response) {
                 }
                 request.push(i + "#" + bird[i].fitness);
             }
-            if(best_fitness > threshold){
-                ctx.fillStyle="red";
-                ctx.font="20px Monospace";
-                ctx.textAlign = "center";
-                ctx.fillText("Threshold met", cvs.width/4, cvs.height/2);
-            }else{
-                $.ajax({
-                        type: "POST",
-                        url: "/ai/finishgen",
-                        contentType: "application/json",
-                        data: JSON.stringify( request ),
-                        dataType: "json",
-                        async: false,
-                        success: function(response) {
-                            console.log(response);
-                            start_gen();
-                        },
-                        error: function(err) {
-                            console.log(err || 'Error!');
-                        }
-                    });
-            }
+            $.ajax({
+                    type: "POST",
+                    url: "/ai/finishgen",
+                    contentType: "application/json",
+                    data: JSON.stringify( request ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        console.log(response);
+                        start_gen();
+                    },
+                    error: function(err) {
+                        console.log(err || 'Error!');
+                    }
+                });
             
         }
     }
