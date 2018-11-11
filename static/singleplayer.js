@@ -18,7 +18,6 @@ var welcome = new Image();
 
 bird.src = "/static/images/bird.png";
 bg.src = "/static/images/bg.png";
-fg.src = "/static/images/fg.png";
 pipeNorth.src = "/static/images/pipeNorth.png";
 pipeSouth.src = "/static/images/pipeSouth.png";
 welcome.src = "/static/images/welcome.png";
@@ -74,8 +73,6 @@ function draw(){
         }
         
     }
-
-    ctx.drawImage(fg,0,cvs.height - fg.height);
 
     ctx.beginPath();
     ctx.moveTo(cvs.width/2,0);

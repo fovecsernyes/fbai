@@ -38,7 +38,6 @@ var LoadImages = function () {
     welcome = new Image();
 
     bg.src = "/static/images/bg.png";
-    fg.src = "/static/images/fg.png";
     welcome.src="/static/images/welcome.png"
 
     bird = new Image();
@@ -122,8 +121,8 @@ var Game = function (response) {
     }
 
     var pipe = [];
-    max = -50;
-    min = -256 + 100
+    min = -256 + 150;
+    max = 0;
     pipe[0] = Pipe( Math.random() * (max - min) + min);
     alive = population;
     /// Updating game
@@ -152,7 +151,7 @@ var Game = function (response) {
                 }
 
             }
-            ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
+            //ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
             ctx.fillStyle="black";
             ctx.font="14px Monospace";
