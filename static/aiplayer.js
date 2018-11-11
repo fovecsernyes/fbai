@@ -162,8 +162,8 @@ var Game = function (response) {
 
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
-            ctx.textAlign = "left";
-            ctx.fillText(generation + ". GENERATION", cvs.width/2 + 20, 10);
+            ctx.textAlign = "center";
+            ctx.fillText(generation + " .  G E N E R A T I O N", cvs.width/4 * 3, 10);
 
             request = [];
             for (var i = bird_begin; i <= bird_end; i++) {
@@ -203,9 +203,9 @@ var Game = function (response) {
                     ctx.fillStyle= "red";
                 }
                 if( (i - bird_begin + 1) <= 50 ){
-                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 20, 20 + c*10);
+                    ctx.fillText(c + ". score: " + bird[i].fitness, cvs.width/2 + 2, 20 + c*10);
                 }else{
-                    ctx.fillText(c + ". fitness: " + bird[i].fitness, cvs.width/2 + 170, 20 + (c-50)*10);
+                    ctx.fillText(c + ". score: " + bird[i].fitness, cvs.width/2 + 150, 20 + (c-50)*10);
                 }
 
                 ctx.beginPath();
