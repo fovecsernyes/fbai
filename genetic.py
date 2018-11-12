@@ -32,6 +32,7 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
         sample.append( [ i[0], pickle.loads(i[1]), fitness[j][1] ] )
         j+=1
 
+    #sorting by fitness
     sample.sort(key=lambda x: x[2], reverse=True)
 
     parents = selection_method(sample, population, selection)
@@ -39,13 +40,14 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
     children = mutation_method(children, population, hidden, mutation1, mutation2)
     sample = reinsertion_method(children, sample, population, hidden, deletion)
 
+    #update the new neural networks in database
     for i in sample:
         database.update_net( pickle.dumps( i[1]), i[0] )
 
     return
 
 ## Selection method
-#  select (population * selction)/100 birds from the best of random pairs
+#  select (population * (selection/100) birds from the best of random pairs
 #  @param sample = [bird_id, neural_network, fitness]
 #  @param population integer
 #  @param selection integer
@@ -75,7 +77,6 @@ def crossover_method(parents, population, crossover):
     total = int(population * crossover/100) 
 
     children = []
-    asd = generate_net(6)
     for i in range(total):
         a = random.randint( 0, len(parents)-1 )
         b = random.randint( 0, len(parents)-1 )

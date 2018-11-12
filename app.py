@@ -12,14 +12,18 @@ from net import *
 from genetic import *
 from database import Database
 
+
 #disable request messages
 import logging
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
+
 ## Initializing flask app
 app = Flask(__name__)
+## To show consol messages
 app.debug = True
+
 
 ## Running parameters as global varible
 running_params = {  "generation":   0,
@@ -40,11 +44,13 @@ running_params = {  "generation":   0,
 ## Neural networks as global variable
 neural_networks = []
 
+
 ## GET request at / - home page
 #  @return index.html
 @app.route('/', methods=['GET'])
 def IndexRequest():
     return render_template('index.html')
+
 
 ## GET request at /sp/ - single player mode
 #  @return sp.html
@@ -52,12 +58,14 @@ def IndexRequest():
 def SingleRequest():
     return render_template('sp.html')
 
+
 ## GET request at /ai/ - ai player mode
 #  @return ai.html
 @app.route('/ai/', methods=['GET'])
-def GetRequest():
+def AiRequest():
     database_status=""
     return render_template('ai.html', database_status=database_status)
+
 
 ## POST request at /ai/
 #  This method handles the procedures after pressing the Apply button
@@ -65,6 +73,7 @@ def GetRequest():
 #  @return ai.html, running_params
 @app.route('/ai/', methods=['POST'])
 def ApplyRequest():
+    global running_params
     running_params['bird_ids'] = []
 
     database_status = database.create_tables()
@@ -99,12 +108,15 @@ def ApplyRequest():
                                         threshold       = running_params['threshold'],
                                         database_status = database_status )
 
+
 ## Post request at /ai/start
 #  This method handles the procedures after pressing the 'Start' button
-#  such as generating neural networks and insterting the into the database
+#  such as generating neural networks randomly and insterting the into the database
 #  @return json (ACK string)
 @app.route('/ai/start', methods=['POST'])
 def StartRequest():
+    #game id
+    global running_params
     global neural_networks
     neural_networks = []
     for _ in range(running_params['population']):
@@ -116,12 +128,14 @@ def StartRequest():
         running_params['bird_ids'].append(bird_id)
     return jsonify({"respond":"start"})
 
+
 ## Post request at /ai/startgen
 #  This method handles the procedures before every generations
 #  such as increasing generation number and loading neural networks, 
 #  @return running_params
 @app.route('/ai/startgen', methods=['POST'])
 def StartGenRequest():
+    global running_params
     running_params['generation'] += 1
     birds_data = database.select_bird(running_params['population'])
     running_params['bird_ids'] = json.dumps( [str(i[0]) for i in birds_data] )
@@ -134,12 +148,14 @@ def StartGenRequest():
 
     return jsonify(running_params)
 
+
 ## Post request at /ai/finishgen
 #  This method handles the procedures after every generations
 #  such as inserting fitness scores, and calling genetic algorithm
 #  @return json (ACK string)
 @app.route('/ai/finishgen', methods=['POST'])
 def FinishGenRequest():
+    global running_params
     for i in request.json:
         bird_id, fitness_score = i.split('#')
         database.insert_fitness(bird_id, fitness_score)
@@ -154,6 +170,7 @@ def FinishGenRequest():
 
     return jsonify({"respond":"finishgen"})
 
+
 ## Post request at /ai/jumpbird
 #  This method handles the procedures after every bird update
 #  such as creating a command list where 0 means nothing 1 means jumping
@@ -161,13 +178,11 @@ def FinishGenRequest():
 @app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
     #respont contains the jumping commands. 0 means not to, 1 means to jump
+    global running_params
     global neural_networks
     respond = []
 
-    deleteme = generate_net(6).state_dict()
-
     for i in request.json:
-
         #birds datas from post request, like id, bY, pX, pY
         ids = json.loads(running_params['bird_ids'])
         #fist bird id
@@ -181,6 +196,7 @@ def JumpBirdRequest():
             out = neural_networks[index](input)
             respond.append ( 1 if int(out) > 0 else 0 ) 
     return jsonify( respond )
+
 
 ## Main function
 #  initialising database and running the flask service

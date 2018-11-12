@@ -20,7 +20,7 @@ var start_gen = function(){
             dataType: "json",
             async: false,
             success: function(response) {
-                console.log(response);
+                //console.log(response);
                 rungame(response);
             },
             error: function(err) {
@@ -29,7 +29,6 @@ var start_gen = function(){
         });
 }
 
-var best_fitness = 0;
 
 /// Loading pictures
 var LoadImages = function () {
@@ -95,7 +94,10 @@ var Pipe = function (y) {
     return self;
 }
 
-/// Gae class
+var best_fitness = 0;
+var best_gen = 0;
+
+/// Game class
 //  @param response running_params 
 var Game = function (response) {
     //variables mainly from backend response
@@ -111,6 +113,7 @@ var Game = function (response) {
     var bird_end = parseInt(birds_ids[population-1]);
     var command = new Array(population).join(0).split('');
     var threshold = parseInt(response["threshold"]);
+    var threshold_met = false;
 
     var img = LoadImages();
 
@@ -151,12 +154,11 @@ var Game = function (response) {
                 }
 
             }
-            //ctx.drawImage(img.fg, 0, cvs.height - img.fg.height);
 
             ctx.fillStyle="black";
             ctx.font="14px Monospace";
             ctx.textAlign = "left";
-            ctx.fillText("Best: " + best_fitness, 0, cvs.height - 10);
+            ctx.fillText("Best: " + best_fitness + ' at ' + best_gen + '. gen', 0, cvs.height - 10);
 
             ctx.fillStyle="blue";
             ctx.font="12px Monospace";
@@ -170,22 +172,17 @@ var Game = function (response) {
                 }else{
                     request.push(i + '#' + 'dead');
                 }
-            }
-            for (var i = bird_begin; i <= bird_end; i++) {
+
                 if (bird[i].alive) {
                     bird[i].update(gravity, command[i-bird_begin], jump);
+
+
                     ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
                     for (var j = 0; j < pipe.length; j++) {
                         if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
                             bird[i].alive = false;
                             if (fitness_scores[i] == null){
                                 fitness_scores[i] = bird[i].fitness;
-                            }else if(fitness_scores[i] > threshold){
-                                ctx.fillStyle="red";
-                                ctx.font="20px Monospace";
-                                ctx.textAlign = "center";
-                                ctx.fillText("Threshold met", cvs.width/4, cvs.height/2);
-                                return;
                             }else{
                                 fitness_scores[i] += bird[i].fitness;
                             }
@@ -216,6 +213,23 @@ var Game = function (response) {
                 ctx.moveTo(cvs.width/2,0);
                 ctx.lineTo(cvs.width/2,cvs.height);
                 ctx.stroke();
+
+                if(bird[i].fitness > best_fitness){
+                    best_fitness = bird[i].fitness;
+                    best_gen = generation;
+                }
+
+                if(bird[i].fitness >= threshold){
+                    threshold_met = true;
+                }
+            }
+
+            if(threshold_met){
+                ctx.fillStyle="red";
+                ctx.font="20px Monospace";
+                ctx.textAlign = "center";
+                ctx.fillText("Threshold met", cvs.width/4, cvs.height/2);
+                return;
             }
 
             $.ajax({
@@ -232,6 +246,7 @@ var Game = function (response) {
                         requestAnimationFrame(update);
                     },
                     error: function(err) {
+                        //debugger;
                         console.log(err || 'Error!');
                     }
                 });
@@ -240,9 +255,6 @@ var Game = function (response) {
             request = [];
             for (var i = bird_begin; i <= bird_end; i++){
 
-                if(bird[i].fitness > best_fitness){
-                    best_fitness = bird[i].fitness;
-                }
                 request.push(i + "#" + bird[i].fitness);
             }
             $.ajax({
@@ -253,7 +265,7 @@ var Game = function (response) {
                     dataType: "json",
                     async: false,
                     success: function(response) {
-                        console.log(response);
+                        //console.log(response);
                         start_gen();
                     },
                     error: function(err) {
