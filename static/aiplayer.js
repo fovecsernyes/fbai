@@ -49,6 +49,7 @@ var LoadImages = function () {
     return self;
 }
 
+
 /// Birds class
 //  @param db_id string the id of the birds
 var Bird = function (db_id) {
@@ -79,6 +80,7 @@ var Bird = function (db_id) {
     return self;
 }
 
+
 /// Pipe class
 //  @param y integer the center of the pipe
 var Pipe = function (y) {
@@ -94,8 +96,10 @@ var Pipe = function (y) {
     return self;
 }
 
+
 var best_fitness = 0;
 var best_gen = 0;
+
 
 /// Game class
 //  @param response running_params 
@@ -117,7 +121,6 @@ var Game = function (response) {
 
     var img = LoadImages();
 
-
     var bird = [];
     for (var i = bird_begin; i <= bird_end; i++) {
         bird[i] = Bird(i);
@@ -128,6 +131,8 @@ var Game = function (response) {
     var max = 0;
     pipe[0] = Pipe( Math.random() * (max - min) + min);
     var alive = population;
+
+
     /// Updating game
     //  sends a post request to /ai/jumbird in every moment to get the commands
     //  when all birds die it sends post reques with the fitness values to /ai/finishgen
@@ -176,7 +181,6 @@ var Game = function (response) {
                 if (bird[i].alive) {
                     bird[i].update(gravity, command[i-bird_begin], jump);
 
-
                     ctx.drawImage(img.bird, bird[i].bX, bird[i].bY);
                     for (var j = 0; j < pipe.length; j++) {
                         if (bird[i].bX + img.bird.width >= pipe[j].pX && bird[i].bX <= pipe[j].pX + img.pipeNorth.width && (bird[i].bY <= pipe[j].pY + img.pipeNorth.height || bird[i].bY + img.bird.height >= pipe[j].pY + constant) || bird[i].bY + img.bird.height >= cvs.height - fg.height) {
@@ -189,15 +193,20 @@ var Game = function (response) {
                         }
                     }
                 }
+
                 if(bird[i].alive){
                     alive++;
                 }
+
                 var c = i - bird_begin;
+
                 if (c < 10 ){
                     c = "0" + c;
                 }
+
                 ctx.font="12px Monospace";
                 ctx.textAlign = "left";
+
                 if(bird[i].alive){
                     ctx.fillStyle="black";
                 }else{
@@ -277,6 +286,7 @@ var Game = function (response) {
     }
     return self;
 }
+
 
 /// Run the game
 var rungame =function(response){

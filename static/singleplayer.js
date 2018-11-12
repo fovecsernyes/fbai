@@ -8,6 +8,7 @@
 var cvs = document.getElementById("canvas");
 var ctx = cvs.getContext("2d");
 
+
 /// global variables
 var bird = new Image();
 var bg = new Image();
@@ -16,11 +17,13 @@ var pipeNorth = new Image();
 var pipeSouth = new Image();
 var welcome = new Image();
 
+
 bird.src = "/static/images/bird.png";
 bg.src = "/static/images/bg.png";
 pipeNorth.src = "/static/images/pipeNorth.png";
 pipeSouth.src = "/static/images/pipeSouth.png";
 welcome.src = "/static/images/welcome.png";
+
 
 var gap = 100;
 var constant;
@@ -31,13 +34,16 @@ var score = 0;
 var min = -256 + 250;
 var max = 0;
 
+
 /// Event listner when pressing key
 document.addEventListener("keydown",moveUp);
+
 
 /// moveUp method
 function moveUp(){
     bY -= 25;
 }
+
 
 /// Pipes
 var pipe = [];
@@ -112,6 +118,7 @@ function draw(){
     requestAnimationFrame(draw);
     
 }
+
 
 draw();
 

@@ -12,6 +12,7 @@ import random
 from collections import OrderedDict
 import numpy
 
+
 ## Genetic algorithm method
 #  Reads the neural networks from database and modifies them and writes them back
 #  @param database Database
@@ -35,9 +36,13 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
     #sorting by fitness
     sample.sort(key=lambda x: x[2], reverse=True)
 
+    #selection evolution operator
     parents = selection_method(sample, population, selection)
+    #crossover evolution operator
     children = crossover_method(parents, population, crossover)
+    #mutation evolution operator
     children = mutation_method(children, population, hidden, mutation1, mutation2)
+    #reinsertation evolution operator
     sample = reinsertion_method(children, sample, population, hidden, deletion)
 
     #update the new neural networks in database
@@ -45,6 +50,7 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
         database.update_net( pickle.dumps( i[1]), i[0] )
 
     return
+
 
 ## Selection method
 #  select (population * (selection/100) birds from the best of random pairs
@@ -67,8 +73,9 @@ def selection_method(sample, population, selection):
 
     return parents
 
-## Crossover method
-#  makes (population * crossover/100) children of the parents
+
+## Crossover method makes (population * crossover/100) children of the parents
+#  by randomly mixing their matrices
 #  @param parents [net, .., net]
 #  @param population integer
 #  @param crossover integer
@@ -97,7 +104,8 @@ def crossover_method(parents, population, crossover):
         
     return children
 
-## Mutation method
+
+## Mutation method mutates the children by modifying a a random value
 #  @param childen integer
 #  @population integer
 #  @hidden integer
@@ -135,8 +143,11 @@ def mutation_method(children, population, hidden, mutation1, mutation2):
 
     return children
 
-## Reinertion method
-#  Inserts new birds into the population
+
+## Reinertion method inserts new birds into the population
+#  population - len(children) - deletion remains
+# range(start, population-deletion-1) replaces
+#  deletion generates
 #  @param sample = [bird_id, neural_network, fitness]
 #  @param population integer 
 #  @param hidden integer
@@ -155,6 +166,7 @@ def reinsertion_method(children, sample, population, hidden, deletion):
 
     return sample
 
+
 ## Makes 4 matrices from OrederedDictionary
 #  @param odict OrderedDictionary
 #  @return r0, r1, r2, r3 numpy arrays
@@ -167,6 +179,7 @@ def make_matrix(odict):
 
     return r0, r1, r2, r3
 
+
 ## Makes OrderedDicttionary from 4 matrices
 #  @param r0 numpy array
 #  @param r1 numpy array
@@ -178,5 +191,7 @@ def make_odict(r0, r1, r2, r3):
                         ('fc1.bias', torch.from_numpy(r1)),
                         ('fc2.weight', torch.from_numpy(r2)),
                         ('fc2.bias', torch.from_numpy(r3))])
+
+
 
 ##  @} 

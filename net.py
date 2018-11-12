@@ -9,9 +9,11 @@ import torch
 from torch import autograd, nn
 import torch.nn.functional as F
 
+
 ## Generate nets
 def generate_net(hidden):
 	return Net(input_size=3, hidden_size=hidden)
+
 
 ## Class of neural networks
 class Net(nn.Module):
@@ -25,7 +27,7 @@ class Net(nn.Module):
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, 1)  
 
-    
+
     ##Forward method
     #  @param x input vector
     #  @return out

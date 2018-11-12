@@ -17,8 +17,6 @@
                 $(this).html(value);
             });
         })
-
-
     </script>
 </head>
 <!-- slider menu -->
@@ -133,6 +131,7 @@
                     $('#mu2_dd').val("{{mutation2}}");
                     $('#tre_dd').val("{{threshold}}");
 
+
                     $('#gra_lab').html("{{gravity}}");
                     $('#jum_lab').html("{{jump}}");
                     $('#pop_lab').html("{{population}}");
@@ -145,7 +144,6 @@
                     $('#mu1_lab').html("{{mutation1}}");
                     $('#mu2_lab').html("{{mutation2}}");
                     $('#tre_lab').html("{{threshold}}");
-
 
     
                     document.getElementById("apply").disabled = true;
@@ -163,6 +161,8 @@
                     document.getElementById("mu2_dd").disabled = true;
                     document.getElementById("tre_dd").disabled = true;
 
+                }else if ( "{{database_status}}" == "NOK"){
+                    alert("Database connection error");
                 }
             }, false);
             bg.src = "../static/images/welcome.png";
