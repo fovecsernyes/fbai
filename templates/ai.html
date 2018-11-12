@@ -6,7 +6,7 @@
     <script type=text/javascript src="{{url_for('static', filename='jquery/jquery.min.js') }}"></script>
     <script type=text/javascript src="{{url_for('static', filename='aiplayer.js') }}"></script>
     <script type="text/javascript">
-        
+        //slider value
         $(function(){
             $('.slider').on('input change', function(){
                 $(this).next($('.slider_label')).html(this.value);
@@ -30,6 +30,7 @@
             <canvas id="canvas" width="576" height="512"></canvas>
         </div>
     <div>
+        <!-- form -->
         <div style="float:left;">
             <form action="/ai/" method = "POST">
                 <small>Gravity<br>
@@ -88,6 +89,7 @@
 
 
     <script>
+        //canvas
         var cvs = document.getElementById("canvas");
         var ctx = cvs.getContext("2d");
         // welcome page on canvas
@@ -115,7 +117,8 @@
                 ctx.font = "10px Monospace";
                 ctx.fillStyle = "grey";
                 ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
-    
+                ///after pressing apply - setting the values
+                // disabling buttons, but enabling start
                 document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
                     $('#gra_dd').val("{{gravity}}")
@@ -182,8 +185,9 @@
                         start_gen();
                     },
                     error: function(err) {
-                        console.log(err || 'Error!');
-                    }
+                        alert("Server is not responding");
+                    },
+                    timeout: 5000 //timeout for 5 sec
                 });                
             });
             

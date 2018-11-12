@@ -34,7 +34,7 @@ running_params = {  "generation":   0,
 ## Neural networks as global variable
 neural_networks = []
 
-##  This method handles the procedures after pressing the Apply button
+## This method handles the procedures after pressing the Apply button
 #  such as initializing database and setting running params
 #  @return ai.html, running_params
 def apply_request(request):
@@ -74,8 +74,7 @@ def apply_request(request):
                                         database_status = database_status )
 
 
-## Post request at /ai/start
-#  This method handles the procedures after pressing the 'Start' button
+## This method handles the procedures after pressing the 'Start' button
 #  such as generating neural networks randomly and insterting the into the database
 #  @return json (ACK string)
 def start_request(request):
@@ -120,7 +119,7 @@ def finish_gen_request(request):
         bird_id, fitness_score = i.split('#')
         database.insert_fitness(bird_id, fitness_score)
 
-    genetic_algorithm(database,  running_params['population'],
+    genetic_algorithm(database, running_params['population'],
                                 running_params['hidden'],
                                 running_params['selection'],
                                 running_params['deletion'],

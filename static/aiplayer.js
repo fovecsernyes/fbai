@@ -24,8 +24,9 @@ var start_gen = function(){
                 rungame(response);
             },
             error: function(err) {
-                console.log(err || 'Error!');
-            }
+                alert("Server is not responding");
+            },
+            timeout: 5000 //timeout for 5 sec
         });
 }
 
@@ -255,9 +256,9 @@ var Game = function (response) {
                         requestAnimationFrame(update);
                     },
                     error: function(err) {
-                        //debugger;
-                        console.log(err || 'Error!');
-                    }
+                        alert("Server is not responding");
+                    },
+                    timeout: 5000 //timeout for 5 sec
                 });
 
         }else{
@@ -278,8 +279,9 @@ var Game = function (response) {
                         start_gen();
                     },
                     error: function(err) {
-                        console.log(err || 'Error!');
-                    }
+                        alert("Server is not responding");
+                    },
+                    timeout: 5000 //timeout for 5 sec
                 });
             
         }
