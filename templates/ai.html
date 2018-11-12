@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,7 +78,7 @@
                 <input type="range" min="5" max="30" step="5" name=mutation2 id="mu2_dd" value="5" class="slider">
                 <span  id="mu2_lab" class="slider_label"></span><br>
 
-                Treshold<br>
+                Treshold score<br>
                 <input type="range" min="5000" max="50000" step="5000" name=threshold id="tre_dd" value="15000" class="slider">
                 <span  id="tre_lab" class="slider_label"></span><br> </small>
 
@@ -109,7 +109,10 @@
                 ctx.font = "15px Monospace";
                 ctx.fillStyle = 'black';
                 ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
-                ctx.fillText("Set the running parameters on right, then click Start!", cvs.width/2, 175);
+                ctx.fillText("1. set the running parameters", cvs.width/2, 175);
+                ctx.fillText("2. click on Apply", cvs.width/2, 200);
+                ctx.fillText("3. click on Start", cvs.width/2, 225);
+
                 //details
                 ctx.font = "10px Monospace";
                 ctx.fillStyle = "grey";
