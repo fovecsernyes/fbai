@@ -83,7 +83,7 @@ def start_request(request):
     global neural_networks
     neural_networks = []
     for _ in range(running_params['population']):
-        cycle_id = database.insert_cycle('')
+        cycle_id = database.insert_cycle( str(running_params))
         neural_network = generate_net(running_params['hidden'])
         neural_networks.append(neural_network)
         neural_network = pickle.dumps( neural_network.state_dict() )

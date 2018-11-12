@@ -37,16 +37,16 @@ class Database(object):
             bird = open('static/sql/bird.sql','r')
             fitness = open('static/sql/fitness.sql','r')
 
+            cur = self.conn.cursor()
             for i in [cycle, bird, fitness]:
-                cur = self.conn.cursor()
                 cur.execute(i.read())
-                cur.close()
                 self.conn.commit()
+            cur.close()
 
             return "OK"
         except(Exception, psycopg2.DatabaseError) as error:
             print(error)
-            #return "NOK"
+            return "NOK"
 
 
     ## Inserting and updating in cycle table
@@ -168,7 +168,7 @@ class Database(object):
         finally:
             if self.conn is None:
                 self.conn.close()
-        return bird
+            return bird
 
 
     ## Select from fitness table
@@ -191,7 +191,7 @@ class Database(object):
             if self.conn is None:
                 self.conn.close()
         return fitness
-
+        
 
     ## Updates the fitness value at given id
     #  @param net neural network
@@ -211,5 +211,27 @@ class Database(object):
         finally:
             if self.conn is None:
                 self.conn.close()
+
+       ## Select from fitness table
+    #  @param population integer
+    #  @return fitness
+    def select_game_id(self):
+        sqlSelect = """SELECT game_id FROM
+                    (SELECT * FROM cycle ORDER BY id DESC LIMIT 1) AS selectbird
+                    ORDER BY id ASC;"""
+
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sqlSelect)
+            game_id = cur.fetchall()
+            self.conn.commit()
+            cur.close()
+            return game_id + 1
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if self.conn is None:
+                self.conn.close()
+                return 0
 
 ## @}

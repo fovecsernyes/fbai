@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.cycle
 id serial NOT NULL,
 parent_id integer DEFAULT 0,
 sum_fitness integer NOT NULL DEFAULT 0,
+game_id integer NOT NULL DEFAULT 0,
 parameters text NOT NULL DEFAULT '',
 CONSTRAINT cycle_pkey PRIMARY KEY (id),
 CONSTRAINT cycle_parent_id_fkey FOREIGN KEY (parent_id)
