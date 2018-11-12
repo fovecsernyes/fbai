@@ -165,7 +165,7 @@
                     document.getElementById("tre_dd").disabled = true;
 
                 }else if ( "{{database_status}}" == "NOK"){
-                    alert("Database connection error");
+                    alert("Database error");
                 }
             }, false);
             bg.src = "../static/images/welcome.png";
@@ -185,7 +185,7 @@
                         start_gen();
                     },
                     error: function(err) {
-                        alert("Server is not responding");
+                        alert("Server side error");
                     },
                     timeout: 5000 //timeout for 5 sec
                 });                

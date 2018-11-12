@@ -24,7 +24,7 @@ var start_gen = function(){
                 rungame(response);
             },
             error: function(err) {
-                alert("Server is not responding");
+                alert("Server side error");
             },
             timeout: 5000 //timeout for 5 sec
         });
@@ -256,7 +256,7 @@ var Game = function (response) {
                         requestAnimationFrame(update);
                     },
                     error: function(err) {
-                        alert("Server is not responding");
+                        alert("Server side error");
                     },
                     timeout: 5000 //timeout for 5 sec
                 });
@@ -279,7 +279,7 @@ var Game = function (response) {
                         start_gen();
                     },
                     error: function(err) {
-                        alert("Server is not responding");
+                        alert("Server side error");
                     },
                     timeout: 5000 //timeout for 5 sec
                 });
