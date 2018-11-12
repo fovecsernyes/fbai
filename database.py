@@ -21,11 +21,11 @@ class Database(object):
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-
-    ## Destructor disconnects from db
-    #def __del__(self):
-    #    self.conn.close()
-    #    print('Database connection closed.')
+    
+    # Destructor disconnects from db
+    def __del__(self):
+       self.conn.close()
+       print('Database connection closed.')
 
 
     ## Initializunk tables if not exist
