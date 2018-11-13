@@ -29,6 +29,7 @@ running_params = {  "generation":   0,
                     "mutation1":    0,
                     "mutation2":    0,
                     "threshold":    0,
+                    "game_id":      0,
                     "bird_ids":     []}
 
 ## Neural networks as global variable
@@ -42,6 +43,8 @@ def apply_request(request):
     running_params['bird_ids'] = []
 
     database_status = database.create_tables()
+    running_params['game_id'] = int(database.select_game_id()[0]) + 1
+    cycle_id = database.insert_cycle( str(running_params), running_params['game_id'])
 
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
@@ -83,7 +86,7 @@ def start_request(request):
     global neural_networks
     neural_networks = []
     for _ in range(running_params['population']):
-        cycle_id = database.insert_cycle( str(running_params))
+        cycle_id = database.insert_cycle( str(running_params), running_params['game_id'])
         neural_network = generate_net(running_params['hidden'])
         neural_networks.append(neural_network)
         neural_network = pickle.dumps( neural_network.state_dict() )

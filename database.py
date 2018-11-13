@@ -52,9 +52,9 @@ class Database(object):
     ## Inserting and updating in cycle table
     #  @param parameters string
     #  @return cycle id
-    def insert_cycle(self, parameters):
-        sqlInsert = """INSERT INTO public.cycle(parameters)
-                        VALUES(%s) RETURNING id;"""
+    def insert_cycle(self, parameters, game_id):
+        sqlInsert = """INSERT INTO public.cycle(parameters, game_id)
+                        VALUES(%s, %s) RETURNING id;"""
         sqlUpdate = """UPDATE public.cycle
                         SET parent_id = %s
                         WHERE id = %s"""
@@ -63,7 +63,7 @@ class Database(object):
         try:
             #print("insert_cycle")
             cur = self.conn.cursor()
-            cur.execute(sqlInsert, (parameters,))
+            cur.execute(sqlInsert, (parameters,game_id,))
             cycle_id = cur.fetchone()[0]
             self.conn.commit()
             #print("update_cycle")
@@ -216,22 +216,20 @@ class Database(object):
     #  @param population integer
     #  @return fitness
     def select_game_id(self):
-        sqlSelect = """SELECT game_id FROM
-                    (SELECT * FROM cycle ORDER BY id DESC LIMIT 1) AS selectbird
-                    ORDER BY id ASC;"""
+        sqlSelect = """SELECT game_id FROM cycle ORDER BY game_id DESC LIMIT 1"""
 
         try:
             cur = self.conn.cursor()
             cur.execute(sqlSelect)
-            game_id = cur.fetchall()
+            game_id = cur.fetchone()
             self.conn.commit()
             cur.close()
-            return game_id + 1
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
             if self.conn is None:
                 self.conn.close()
-                return 0
+            return game_id
+
 
 ## @}
