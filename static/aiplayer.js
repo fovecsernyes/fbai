@@ -4,11 +4,6 @@
 //  @brief This file contains the "AIPLAYER MODE"
 //  @{
 
-var show_value = function(id){
-    return $(id).val();
-}
-
-
 /// Post request to /ai/startgen after every generation
 //  calls rungame() method
 var start_gen = function(){

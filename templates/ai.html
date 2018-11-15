@@ -24,7 +24,6 @@
     <div>
         <input type="button" onclick="location.href='/';" value="< Home" />
         <input type="button" onclick="location.href='/sp';" value="Single player mode" />
-        <input type="button" value="Reload" onClick="window.location.href=window.location.href" />
     </div>
         <div style="float:left;">
             <canvas id="canvas" width="576" height="512"></canvas>
@@ -69,11 +68,11 @@
                 <input type="range" min="40" max="90" step="5" name=crossover id="cro_dd" value="85" class="slider">
                 <span  id="cro_lab" class="slider_label"></span><br>
 
-                Mutation on population in %<br>
+                Mutation rate on population in %<br>
                 <input type="range" min="5" max="30" step="5" name=mutation1 id="mu1_dd" value="5" class="slider">
                 <span  id="mu1_lab" class="slider_label"></span><br>
 
-                Mutation on entity in %<br>
+                Mutation rate on entity in %<br>
                 <input type="range" min="5" max="30" step="5" name=mutation2 id="mu2_dd" value="5" class="slider">
                 <span  id="mu2_lab" class="slider_label"></span><br>
 
@@ -83,6 +82,8 @@
 
                 <small><input id="apply" type="submit" formmethod="POST" value="Apply"/>
                 <small><input id="start" type="button" value="Start" />
+                <input type="button" value="Reset" onClick="window.location.href=window.location.href" />
+
             </form>
         </div>
     </div>
