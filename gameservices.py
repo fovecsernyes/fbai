@@ -43,8 +43,9 @@ def apply_request(request):
     running_params['bird_ids'] = []
 
     database_status = database.create_tables()
-    running_params['game_id'] = int(database.select_game_id()[0]) + 1
-    cycle_id = database.insert_cycle( str(running_params), running_params['game_id'])
+    if database_status == "OK":
+        running_params['game_id'] = int(database.select_game_id()[0]) + 1
+        cycle_id = database.insert_cycle( str(running_params), running_params['game_id'])
 
     running_params['generation'] = 0
     running_params['gravity'] = int(request.form['gravity'])
