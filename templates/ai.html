@@ -32,6 +32,8 @@
         <!-- form -->
         <div style="float:left;">
             <form action="/ai/" method = "POST">
+                ---<b><font color="#7BC6CC">GAME</font></b>---<br>
+
                 <small>Gravity<br>
                 <input type="range" min="5" max="10" step="1" name=gravity id="gra_dd" value="7" class="slider">
                 <span  id="gra_lab" class="slider_label"></span><br>
@@ -40,9 +42,6 @@
                 <input type="range" min="5" max="10" step="1" name=jump id="jum_dd" value="5" class="slider">
                 <span  id="jum_lab" class="slider_label"></span><br>
 
-                Population size<br>
-                <input type="range" min="20" max="100" step="5" name=population id="pop_dd" value="50" class="slider">
-                <span  id="pop_lab" class="slider_label"></span><br>
 
                 Gap between pipes<br>
                 <input type="range" min="90" max="140" step="5" name=gap id="gap_dd" value="120" class="slider">
@@ -50,7 +49,14 @@
 
                 Distance between pipes<br>
                 <input type="range" min="120" max="180" step="10" name=distance id="dis_dd" value="160" class="slider">
-                <span  id="dis_lab" class="slider_label"></span><br>
+                <span  id="dis_lab" class="slider_label"></span><br></small>
+
+                <br>---<b><font color="#7BC6CC">EVOLUTION</font></b>---<br>
+
+
+                <small>Population size<br>
+                <input type="range" min="20" max="100" step="5" name=population id="pop_dd" value="50" class="slider">
+                <span  id="pop_lab" class="slider_label"></span><br>
 
                 Number of hidden neurons<br>
                 <input type="range" min="3" max="10" step="1" name=hidden id="hid_dd" value="4" class="slider">
