@@ -13,6 +13,7 @@ from config import config
 class Database(object):
     ## Constructor connects to db
     def __init__(self):
+        #print(TEST: Database __init__ called)
         self.conn = None
         try:
             self.params = config()
@@ -24,6 +25,7 @@ class Database(object):
 
     # Destructor disconnects from db
     def __del__(self):
+        #print(TEST: Database __del__ called)
        self.conn.close()
        print('Database connection closed.')
 
@@ -31,6 +33,7 @@ class Database(object):
     ## Initializunk tables if not exist
     #  @return "OK" string
     def create_tables(self):
+        #print(TEST: Database create_tables called)
 
         try:
             cycle = open('static/sql/cycle.sql','r')
@@ -53,6 +56,7 @@ class Database(object):
     #  @param parameters string
     #  @return cycle id
     def insert_cycle(self, parameters, game_id):
+        #print(TEST: Database insert_cycle( ) called)
         sqlInsert = """INSERT INTO public.cycle(parameters, game_id)
                         VALUES(%s, %s) RETURNING id;"""
         sqlUpdate = """UPDATE public.cycle
@@ -87,6 +91,7 @@ class Database(object):
     #  @param neural_network string
     #  @return bird_id string
     def insert_bird(self, cycle_id, neural_network):
+        #print(TEST: Database insert_bird( ) called)
         sqlInsert = """INSERT INTO public.bird(cycle_id)
                    VALUES(%s) RETURNING id;"""
         sqlUpdate = """UPDATE public.bird
@@ -121,6 +126,7 @@ class Database(object):
     #  @param fitness_score string
     #  @return fitness_id string
     def insert_fitness(self, bird_id, fitness_score):
+        #print(TEST: Database insert_fitness( ) called)
         sqlInsert = """INSERT INTO public.fitness(cycle_id, bird_id)
                         VALUES((SELECT MAX(id) FROM public.cycle), %s) RETURNING id;"""
         sqlUpdate = """UPDATE public.fitness
@@ -153,6 +159,7 @@ class Database(object):
     #  @param population integer
     #  @return ids and neural networks
     def select_bird(self, population):
+        #print(TEST: Database select_bird( ) called)
         sqlSelect = """SELECT id, neural_network FROM
                     (SELECT * FROM bird ORDER BY id DESC LIMIT %s) AS selectbird
                     ORDER BY id ASC;"""
@@ -175,6 +182,7 @@ class Database(object):
     #  @param population integer
     #  @return fitness
     def select_fitness(self, population):
+        #print(TEST: Database select_fitness( ) called)
         sqlSelect = """SELECT bird_id, fitness_score FROM
                     (SELECT * FROM fitness ORDER BY id DESC LIMIT %s) AS selectbird
                     ORDER BY id ASC;"""
@@ -197,6 +205,7 @@ class Database(object):
     #  @param net neural network
     #  @param bird_id string
     def update_net(self, net, bird_id):
+        #print(TEST: Database update_net( ) called)
         sqlUpdate = """UPDATE "bird" 
                      SET neural_network = %s
                      WHERE id = %s;"""
@@ -216,6 +225,7 @@ class Database(object):
     #  @param population integer
     #  @return fitness
     def select_game_id(self):
+        #print(TEST: Database select_game_id( ) called)
         sqlSelect = """SELECT game_id FROM cycle ORDER BY game_id DESC LIMIT 1"""
 
         try:

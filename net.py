@@ -12,6 +12,7 @@ import torch.nn.functional as F
 
 ## Generate nets
 def generate_net(hidden):
+    #print(TEST: net generate_net( ) called)
 	return Net(input_size=3, hidden_size=hidden)
 
 
@@ -22,6 +23,7 @@ class Net(nn.Module):
     #  @param hidden_size integer
     #  @param num_classes integer
     def __init__(self, input_size, hidden_size):
+        #print(TEST: net __init__( ) called)
         super(Net, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size) 
         self.relu = nn.ReLU()
@@ -32,6 +34,7 @@ class Net(nn.Module):
     #  @param x input vector
     #  @return out
     def forward(self, x):
+        #print(TEST: net forward( ) called)
         out = self.relu(self.fc1(x))
         out = self.fc2(out)
         return out

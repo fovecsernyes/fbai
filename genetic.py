@@ -24,6 +24,8 @@ import numpy
 #  @param mutation1 integer mutation rate of all birds
 #  @param mutation2 integer mutation rate on entity
 def genetic_algorithm(database, population, hidden, selection, deletion, crossover, mutation1, mutation2):
+    #print(TEST: genetic genetic_algorithm( ) called)
+
     birds_data = database.select_bird(population)
     fitness = database.select_fitness(population)
     sample = []
@@ -59,6 +61,8 @@ def genetic_algorithm(database, population, hidden, selection, deletion, crossov
 #  @param selection integer
 #  @return parents [net, .., net]
 def selection_method(sample, population, selection):
+    #print(TEST: genetic selection_method( ) called)
+
     total = int( population * selection/100 )
     parents = []
 
@@ -81,6 +85,7 @@ def selection_method(sample, population, selection):
 #  @param crossover integer
 #  @return [net, .. , net]
 def crossover_method(parents, population, crossover):
+    #print(TEST: genetic crossover_method( ) called)
     total = int(population * crossover/100) 
 
     children = []
@@ -113,6 +118,7 @@ def crossover_method(parents, population, crossover):
 #  @param mutation2 integer
 #  @return [net, .., net]
 def mutation_method(children, population, hidden, mutation1, mutation2):
+    #print(TEST: genetic mutation_method( ) called)
     total = int(population * mutation1/100)
     for i in range(total):
         pos = random.randint( 0, len(children)-1 )
@@ -154,6 +160,7 @@ def mutation_method(children, population, hidden, mutation1, mutation2):
 #  @param deletion integer
 #  @return sample = [bird_id, neural_network, fitness]
 def reinsertion_method(children, sample, population, hidden, deletion):
+    #print(TEST: genetic reinsertation_method( ) called)
     start = population - len(children) - deletion
 
     for i in range(start, population-deletion-1):
@@ -171,6 +178,7 @@ def reinsertion_method(children, sample, population, hidden, deletion):
 #  @param odict OrderedDictionary
 #  @return r0, r1, r2, r3 numpy arrays
 def make_matrix(odict):
+    #print(TEST: genetic make_matrix( ) called)
     dict_list = list( odict.items() )
     r0 = dict_list[0][1].numpy()
     r1 = dict_list[1][1].numpy()
@@ -187,6 +195,7 @@ def make_matrix(odict):
 #  @param r3 numpy array
 #  return OrderedDicttionary
 def make_odict(r0, r1, r2, r3):
+    #print(TEST: genetic make_odict( ) called)
     return OrderedDict([('fc1.weight', torch.from_numpy(r0)),
                         ('fc1.bias', torch.from_numpy(r1)),
                         ('fc2.weight', torch.from_numpy(r2)),

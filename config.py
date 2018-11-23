@@ -12,6 +12,7 @@ from configparser import ConfigParser
 #  @param section string used service name
 #  @return Dictionary with the configuration values
 def config(filename='database.ini', section='postgresql'):
+    #print(TEST: config config() called)
     parser = ConfigParser()
     parser.read(filename)
  

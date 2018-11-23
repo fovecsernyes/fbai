@@ -39,6 +39,7 @@ neural_networks = []
 #  such as initializing database and setting running params
 #  @return ai.html, running_params
 def apply_request(request):
+    #print(TEST: Database apply_request( ) called)
     global running_params
     running_params['bird_ids'] = []
 
@@ -82,6 +83,7 @@ def apply_request(request):
 #  such as generating neural networks randomly and insterting the into the database
 #  @return json (ACK string)
 def start_request(request):
+    #print(TEST: gameservices start_request( ) called)
     #game id
     global running_params
     global neural_networks
@@ -100,6 +102,7 @@ def start_request(request):
 #  such as increasing generation number and loading neural networks, 
 #  @return running_params
 def start_gen_request(request):
+    #print(TEST: gameservices start_gen_request( ) called)
     global running_params
     running_params['generation'] += 1
     birds_data = database.select_bird(running_params['population'])
@@ -118,6 +121,7 @@ def start_gen_request(request):
 #  such as inserting fitness scores, and calling genetic algorithm
 #  @return json (ACK string)
 def finish_gen_request(request):
+    #print(TEST: gameservices finish_gen_request( ) called)
     global running_params
     for i in request.json:
         bird_id, fitness_score = i.split('#')
@@ -138,10 +142,22 @@ def finish_gen_request(request):
 #  such as creating a command list where 0 means nothing 1 means jumping
 #  @return [0, 1, 1, 1 .. 0, 1] list
 def jump_bird_request(request):
+    #print(TEST: gameservices jump_bird_request( ) called)
     #respont contains the jumping commands. 0 means not to, 1 means to jump
     global running_params
     global neural_networks
     respond = []
+
+    ##testing
+    # birdy= open("static/test/birdsy.txt","a+")
+    # pipex= open("static/test/pipesx.txt","a+")
+    # pipey= open("static/test/pipesy.txt","a+")
+    # if request.json[0].split('#')[1] != 'dead':
+    #     bird_pos_y, pipe_pos_x, pipe_pos_y = request.json[0].split('#')[1].split(',')
+    #     birdy.write(bird_pos_y + '\n')
+    #     pipex.write(pipe_pos_x + '\n')
+    #     pipey.write(pipe_pos_y + '\n')
+        ##testing end
 
     for i in request.json:
         #birds datas from post request, like id, bY, pX, pY

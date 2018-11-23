@@ -53,11 +53,12 @@
 
                 <br>---<b><font color="#7BC6CC">EVOLUTION</font></b>---<br>
 
-
+                <!-- modify this for load test -->
                 <small>Population size<br>
                 <input type="range" min="20" max="100" step="5" name=population id="pop_dd" value="100" class="slider">
                 <span  id="pop_lab" class="slider_label"></span><br>
-
+                
+                <!-- modify this for load test -->
                 Number of hidden neurons<br>
                 <input type="range" min="3" max="10" step="1" name=hidden id="hid_dd" value="7" class="slider">
                 <span  id="hid_lab" class="slider_label"></span><br>
@@ -126,6 +127,8 @@
                 ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
                 ///after pressing apply - setting the values
                 // disabling buttons, but enabling start
+
+
                 document.getElementById("start").disabled = true;
                 if ( "{{database_status}}" == "OK"){
                     $('#gra_dd').val("{{gravity}}")

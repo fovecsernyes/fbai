@@ -24,50 +24,58 @@ app.debug = True
 #  @return index.html
 @app.route('/', methods=['GET'])
 def IndexRequest():
-    return render_template('index.html')
+	#print("TEST: index page")
+	return render_template('index.html')
 
 
 ## GET request at /sp/ - single player mode
 #  @return sp.html
 @app.route('/sp/', methods=['GET'])
 def SingleRequest():
-    return render_template('sp.html')
+	#print("TEST: singleplayer page")
+	return render_template('sp.html')
 
 
 ## GET request at /ai/ - ai player mode
 #  @return ai.html
 @app.route('/ai/', methods=['GET'])
 def AiRequest():
-    return render_template('ai.html')
+	#print("TEST: aiplayer page")
+	return render_template('ai.html')
 
 
 ## POST request at /ai/
 @app.route('/ai/', methods=['POST'])
 def ApplyRequest():
-    return apply_request(request)
+	#print("TEST: Apply button pressed")
+	return apply_request(request)
 
 
 ## Post request at /ai/start
 @app.route('/ai/start', methods=['POST'])
 def StartRequest():
-    return start_request(request)
+	#print("TEST: Start button pressed")
+	return start_request(request)
 
 
 ## Post request at /ai/startgen
 @app.route('/ai/startgen', methods=['POST'])
 def StartGenRequest():
+	#print(TEST: StartGenRequest() called)
     return start_gen_request(request)
 
 
 ## Post request at /ai/finishgen
 @app.route('/ai/finishgen', methods=['POST'])
 def FinishGenRequest():
+	#print(TEST: StartGenRequest() called)
     return finish_gen_request(request)
 
 
 ## Post request at /ai/jumpbird
 @app.route('/ai/jumpbird', methods=['POST'])
 def JumpBirdRequest():
+	#print(TEST: StartGenRequest() called)
     return jump_bird_request(request)
 
 
