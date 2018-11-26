@@ -1,15 +1,10 @@
 # Flappy Bird AI client
-AI client for flappy bird
+Bachelor thesis of Mark Vecsernyes
 
 ## Requirements:
-* python3
-* Flask for python
-* psycopg2 for python
-* configparser for python
-* Web browser
-* PostgreSQL with postgres role
+see in document
 
-References:
-* https://www.youtube.com/watch?v=L07i4g-zhDA
-* https://pythonspot.com/flask-web-forms/
-* http://www.postgresqltutorial.com/postgresql-python/connect/
+Folders:
+* documents: contain documents
+* test: contains test files
+* src contains source code
