@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird AI player</title>
+    <script type=text/javascript src="{{url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='aiplayer.js') }}"></script>
+    <script type="text/javascript">
+        //slider value
+        $(function(){
+            $('.slider').on('input change', function(){
+                $(this).next($('.slider_label')).html(this.value);
+            });
+
+            $('.slider_label').each(function(){
+                var value = $(this).prev().attr('value');
+                $(this).html(value);
+            });
+        })
+    </script>
+</head>
+<!-- slider menu -->
+<body onload="onLoadFunction();">
+    <div>
+        <input type="button" onclick="location.href='/';" value="< Home" />
+        <input type="button" onclick="location.href='/sp';" value="Single player mode" />
+    </div>
+        <div style="float:left;">
+            <canvas id="canvas" width="576" height="512"></canvas>
+        </div>
+    <div>
+        <!-- form -->
+        <div style="float:left;">
+            <form action="/ai/" method = "POST">
+                ---<b><font color="#7BC6CC">GAME</font></b>---<br>
+
+                <small>Gravity<br>
+                <input type="range" min="5" max="10" step="1" name=gravity id="gra_dd" value="8" class="slider">
+                <span  id="gra_lab" class="slider_label"></span><br>
+
+                Jump height<br>
+                <input type="range" min="5" max="10" step="1" name=jump id="jum_dd" value="5" class="slider">
+                <span  id="jum_lab" class="slider_label"></span><br>
+
+
+                Gap between pipes<br>
+                <input type="range" min="90" max="140" step="5" name=gap id="gap_dd" value="120" class="slider">
+                <span  id="gap_lab" class="slider_label"></span><br>
+
+                Distance between pipes<br>
+                <input type="range" min="120" max="180" step="10" name=distance id="dis_dd" value="160" class="slider">
+                <span  id="dis_lab" class="slider_label"></span><br></small>
+
+                <br>---<b><font color="#7BC6CC">EVOLUTION</font></b>---<br>
+
+                <!-- modify this for load test -->
+                <small>Population size<br>
+                <input type="range" min="20" max="100" step="5" name=population id="pop_dd" value="100" class="slider">
+                <span  id="pop_lab" class="slider_label"></span><br>
+                
+                <!-- modify this for load test -->
+                Number of hidden neurons<br>
+                <input type="range" min="3" max="10" step="1" name=hidden id="hid_dd" value="7" class="slider">
+                <span  id="hid_lab" class="slider_label"></span><br>
+
+                Selection rate in %<br>
+                <input type="range" min="50" max="100" step="5" name=selection id="sel_dd" value="90" class="slider">
+                <span  id="sel_lab" class="slider_label"></span><br>
+
+                Deletion rate in %<br>
+                <input type="range" min="1" max="10" step="1" name=deletion id="del_dd" value="2" class="slider">
+                <span  id="del_lab" class="slider_label"></span><br>
+
+                Crossover rate in %<br>
+                <input type="range" min="40" max="90" step="5" name=crossover id="cro_dd" value="85" class="slider">
+                <span  id="cro_lab" class="slider_label"></span><br>
+
+                Mutation rate on population in %<br>
+                <input type="range" min="5" max="30" step="5" name=mutation1 id="mu1_dd" value="10" class="slider">
+                <span  id="mu1_lab" class="slider_label"></span><br>
+
+                Mutation rate on entity in %<br>
+                <input type="range" min="5" max="30" step="5" name=mutation2 id="mu2_dd" value="5" class="slider">
+                <span  id="mu2_lab" class="slider_label"></span><br>
+
+                Treshold score<br>
+                <input type="range" min="5000" max="50000" step="5000" name=threshold id="tre_dd" value="5000" class="slider">
+                <span  id="tre_lab" class="slider_label"></span><br> </small>
+
+                <small><input id="apply" type="submit" formmethod="POST" value="Apply"/>
+                <small><input id="start" type="button" value="Start" />
+                <input type="button" value="Reset" onClick="window.location.href=window.location.href" />
+
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        //canvas
+        var cvs = document.getElementById("canvas");
+        var ctx = cvs.getContext("2d");
+        // welcome page on canvas
+        function onLoadFunction(){
+
+    
+            var bg = new Image();
+            bg.addEventListener('load', function() {
+                //background
+                ctx.drawImage(bg,0,0);
+                //welcome
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'white';
+                ctx.textAlign = "center";
+                ctx.fillText("AI player mode!", cvs.width/2, 100);
+                //description
+                ctx.font = "15px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.fillText("This program will learn to play Flappy Bird.", cvs.width/2, 150);
+                ctx.fillText("1. set the running parameters", cvs.width/2, 175);
+                ctx.fillText("2. click on Apply", cvs.width/2, 200);
+                ctx.fillText("3. click on Start", cvs.width/2, 225);
+
+                //details
+                ctx.font = "10px Monospace";
+                ctx.fillStyle = "grey";
+                ctx.fillText("Created by MV with the help of HB.", cvs.width/2, cvs.height - 10);
+                ///after pressing apply - setting the values
+                // disabling buttons, but enabling start
+
+
+                document.getElementById("start").disabled = true;
+                if ( "{{database_status}}" == "OK"){
+                    $('#gra_dd').val("{{gravity}}")
+                    $('#jum_dd').val("{{jump}}");
+                    $('#pop_dd').val("{{population}}");
+                    $('#gap_dd').val("{{gap}}");
+                    $('#dis_dd').val("{{distance}}");
+                    $('#hid_dd').val("{{hidden}}");
+                    $('#sel_dd').val("{{selection}}");
+                    $('#del_dd').val("{{deletion}}");
+                    $('#cro_dd').val("{{crossover}}");
+                    $('#mu1_dd').val("{{mutation1}}");
+                    $('#mu2_dd').val("{{mutation2}}");
+                    $('#tre_dd').val("{{threshold}}");
+
+
+                    $('#gra_lab').html("{{gravity}}");
+                    $('#jum_lab').html("{{jump}}");
+                    $('#pop_lab').html("{{population}}");
+                    $('#gap_lab').html("{{gap}}");
+                    $('#dis_lab').html("{{distance}}");
+                    $('#hid_lab').html("{{hidden}}");
+                    $('#sel_lab').html("{{selection}}");
+                    $('#del_lab').html("{{deletion}}");
+                    $('#cro_lab').html("{{crossover}}");
+                    $('#mu1_lab').html("{{mutation1}}");
+                    $('#mu2_lab').html("{{mutation2}}");
+                    $('#tre_lab').html("{{threshold}}");
+
+    
+                    document.getElementById("apply").disabled = true;
+                    document.getElementById("start").disabled = false;
+                    document.getElementById("gra_dd").disabled = true;
+                    document.getElementById("jum_dd").disabled = true;
+                    document.getElementById("pop_dd").disabled = true;
+                    document.getElementById("gap_dd").disabled = true;
+                    document.getElementById("dis_dd").disabled = true;
+                    document.getElementById("hid_dd").disabled = true;
+                    document.getElementById("sel_dd").disabled = true;
+                    document.getElementById("del_dd").disabled = true;
+                    document.getElementById("cro_dd").disabled = true;
+                    document.getElementById("mu1_dd").disabled = true;
+                    document.getElementById("mu2_dd").disabled = true;
+                    document.getElementById("tre_dd").disabled = true;
+
+                }else if ( "{{database_status}}" == "NOK"){
+                    alert("Database error");
+                }
+            }, false);
+            bg.src = "../static/images/welcome.png";
+    
+            //clicking the start button
+            document.getElementById("start").addEventListener("click", function(){
+
+                document.getElementById("start").disabled = true;
+                $.ajax({
+                    type: "POST",
+                    url: "/ai/start",
+                    contentType: "application/json",
+                    data: JSON.stringify( {"request" : "start"} ),
+                    dataType: "json",
+                    async: false,
+                    success: function(response) {
+                        start_gen();
+                    },
+                    error: function(err) {
+                        alert("Server side error");
+                    },
+                    timeout: 5000 //timeout for 5 sec
+                });                
+            });
+            
+        };
+    </script>
+</body>
+</html>

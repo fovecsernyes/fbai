@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird</title>
+</head>
+<body onload="onLoadFunction();">
+    <input type="button" onclick="location.href='/sp';" value="Single player mode" />
+    <input type="button" onclick="location.href='/ai';" value="AI player mode" />
+    <div> <canvas id="canvas" width="576" height="512"></canvas> </div>
+
+    <script>
+        var cvs = document.getElementById("canvas");
+        var ctx = cvs.getContext("2d");
+        // welcome page on canvas
+        function onLoadFunction(){
+            var bg = new Image();
+            bg.addEventListener('load', function() {
+                //background
+                ctx.drawImage(bg,0,0);
+                //welcome
+                ctx.font = "20px Monospace";
+                ctx.fillStyle = 'white';
+                ctx.textAlign = "center";
+                ctx.fillText("Welcome!", cvs.width/2, 100);
+                //description
+                ctx.font = "15px Monospace";
+                ctx.fillStyle = 'black';
+                ctx.fillText("Please select the game mode above an have fun!", cvs.width/2, 150);
+                ctx.font = "10px Monospace";
+                ctx.fillStyle = "grey";
+                ctx.fillText("This is not the original game, just a reimplemented version based on the original Flappy Bird.", cvs.width/2, cvs.height - 10);
+
+            }, false);
+            bg.src = "../static/images/welcome.png";
+    }
+    </script>
+</body>
+</html>
